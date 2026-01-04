@@ -10,13 +10,14 @@ Create pixel art and ASCII patterns on your GitHub contribution graph.
 
 ## ✨ Features
 
-- Draw on your GitHub contribution calendar with a 7×52 grid
-- AI-powered text-to-pattern (up to 13 characters)
-- 10+ ready-made templates (heart, smile, star, etc.)
-- Secure GitHub login
-- Export/import patterns as JSON
-- Keyboard shortcuts & undo/redo
-- Dark & light mode
+- 7×52 grid canvas matching GitHub’s contribution calendar
+- AI-powered text-to-pattern generator (up to 13 characters)
+- 10+ ready-made templates (heart, smile, star, wave, etc.)
+- Secure GitHub authentication
+- Export and import patterns as JSON
+- Keyboard shortcuts with undo/redo support
+- Dark and light mode
+
 
 ---
 
