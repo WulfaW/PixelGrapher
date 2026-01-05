@@ -5,7 +5,7 @@ import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save }
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { usePatternStorage } from '@/hooks/use-pattern-storage';
-import { dateForCell, getCalendarRange } from '@shared/calendar';
+import { dateForCell, getCalendarRange } from '../shared/calendar';
 import GitHubPanel from './GitHubPanel';
 
 const DAYS_PER_WEEK = 7;
