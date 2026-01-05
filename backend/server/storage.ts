@@ -1,5 +1,16 @@
-import { type User, type InsertUser } from "@shared/schema";
 import { randomUUID } from "crypto";
+
+// Type definitions for User
+interface User {
+  id: string;
+  username: string;
+  email?: string;
+}
+
+interface InsertUser {
+  username: string;
+  email?: string;
+}
 import fs from "fs";
 import path from "path";
 

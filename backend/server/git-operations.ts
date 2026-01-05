@@ -2,7 +2,24 @@ import { execSync, spawn } from 'child_process';
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { dateForCell, getCalendarRange } from '@shared/calendar';
+
+// Helper functions for calendar calculations
+function getCalendarRange(year: number) {
+  const jan1 = new Date(Date.UTC(year, 0, 1));
+  const dec31 = new Date(Date.UTC(year, 11, 31));
+  const startOfWeek = new Date(jan1);
+  startOfWeek.setUTCDate(jan1.getUTCDate() - jan1.getUTCDay());
+  const endOfWeek = new Date(dec31);
+  endOfWeek.setUTCDate(dec31.getUTCDate() + (6 - dec31.getUTCDay()));
+  const weeksCount = Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  return { startDate: startOfWeek, endDate: endOfWeek, weeksCount };
+}
+
+function dateForCell(day: number, week: number, range: any): Date {
+  const date = new Date(range.startDate);
+  date.setUTCDate(date.getUTCDate() + (week * 7) + day);
+  return date;
+}
 
 interface CommitConfig {
   date: string;

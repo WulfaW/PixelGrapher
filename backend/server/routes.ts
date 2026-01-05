@@ -184,6 +184,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/execute-commits", async (req, res) => {
     let gitOps: GitOperations | null = null;
     let heartbeat: NodeJS.Timeout | null = null;
+    let userKey: string = "";
 
     try {
       if (!req.isAuthenticated()) {
@@ -203,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Compute totals and enforce limits before starting heavy work
-      const totalCommitsNeeded = commitPlan.reduce((sum: number, item: any) => sum + (Number(item.count) || 0), 0);
+      let totalCommitsNeeded = commitPlan.reduce((sum: number, item: any) => sum + (Number(item.count) || 0), 0);
       if (totalCommitsNeeded <= 0) {
         return res.status(400).json({ error: 'Commit plan contains no commits' });
       }
@@ -214,7 +215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Prevent concurrent long-running jobs from the same user
       const clientIp = req.ip || (req.headers['x-forwarded-for'] as string) || 'unknown';
-      const userKey = (() => {
+      userKey = (() => {
         try { return (req.user as any)?.username || clientIp; } catch { return clientIp; }
       })();
 
@@ -243,7 +244,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       // Heartbeat to keep connection alive through proxies (SSE comments)
-      heartbeat = setInterval(() => {
+      let heartbeat: NodeJS.Timeout | null = setInterval(() => {
         try { res.write(': heartbeat\n\n'); } catch (e) { /* ignore */ }
       }, 20_000);
 
@@ -259,7 +260,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (e) {
           console.error('Cleanup error after client disconnect:', e);
         }
-        clearInterval(heartbeat);
+        if (heartbeat) clearInterval(heartbeat);
         runningJobs.delete(userKey);
       };
 
@@ -277,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate commits
       let totalCommitsCreated = 0;
-      const totalCommitsNeeded = commitPlan.reduce((sum: number, item: any) => sum + item.count, 0);
+      // totalCommitsNeeded already calculated above
 
       for (let i = 0; i < commitPlan.length; i++) {
         const { date, count } = commitPlan[i];
@@ -370,7 +371,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.end();
       
       // Cleanup immediately on error
-      try { clearInterval(heartbeat); } catch {}
+      try { if (heartbeat) clearInterval(heartbeat); } catch {}
       if (gitOps) {
         try {
           gitOps.cleanup();
@@ -391,7 +392,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }, 5000); // Wait 5 seconds before cleanup to ensure push is complete
       }
       // Ensure running job record removed
-      runningJobs.delete(userKey);
+      if (userKey) {
+        runningJobs.delete(userKey);
+      }
     }
   });
 
