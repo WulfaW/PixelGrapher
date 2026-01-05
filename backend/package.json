@@ -4,8 +4,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch index.ts",
-    "start": "tsx index.ts",
+    "start": "node index.js",
+    "server": "node index.js",
+    "dev": "nodemon index.js",
     "test": "vitest run"
   },
   "dependencies": {
