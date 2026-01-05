@@ -1,23 +1,23 @@
 /// <reference types="vitest" />
+
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
+      "@": "/src",
     },
   },
-  root: path.resolve(import.meta.dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist"),
+    outDir: "dist",
     emptyOutDir: true,
     minify: "terser",
     terserOptions: {
       compress: {
-        drop_console: process.env.NODE_ENV === "production",
+        drop_console: true,
       },
     },
     rollupOptions: {
@@ -37,7 +37,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: process.env.VITE_API_URL || "http://localhost:3000",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },
@@ -45,7 +45,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: path.resolve(import.meta.dirname, "src", "setupTests.ts"),
+    setupFiles: "src/setupTests.ts",
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
 });
