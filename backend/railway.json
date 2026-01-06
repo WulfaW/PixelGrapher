@@ -1,6 +1,6 @@
 {
   "builder": "nixpacks",
   "nixpacks": {
-    "buildCommand": "npm install && npm run build"
+    "buildCommand": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build && mkdir -p dist/server/public && cp -r ../frontend/dist/* dist/server/public/"
   }
 }
