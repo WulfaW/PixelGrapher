@@ -1,9 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./storage.js";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { GitOperations, generateCommitPlan, sleep } from "./git-operations";
+import { GitOperations, generateCommitPlan, sleep } from "./git-operations.js";
 
 // Security / operational limits for long-running SSE jobs
 const MAX_COMMITS = Number(process.env.MAX_COMMITS || 2000);
