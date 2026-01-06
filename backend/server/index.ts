@@ -10,11 +10,13 @@ const app = express();
 
 // CORS configuration
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+console.log(`[CORS] Allowing origin: ${frontendUrl}`);
 app.use(cors({
   origin: frontendUrl,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
 }));
 
 app.use(express.json());
@@ -33,7 +35,7 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000, // 24 saat
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: "lax",
     },
   })
 );
