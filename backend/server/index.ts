@@ -9,14 +9,9 @@ import crypto from "crypto";
 const app = express();
 
 // CORS configuration
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-console.log(`[CORS] Allowing origin: ${frontendUrl}`);
 app.use(cors({
-  origin: frontendUrl,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 200,
+  origin: "https://pixel-grapher.vercel.app",
+  credentials: true
 }));
 
 app.use(express.json());
