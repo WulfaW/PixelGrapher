@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Github, Moon, Sun, Star, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 export default function Header() {
   const [isDark, setIsDark] = useState(() => {
@@ -24,7 +25,7 @@ export default function Header() {
     // Check GitHub auth to show username in header
     const checkStatus = async () => {
       try {
-        const res = await fetch('/api/auth/status', { credentials: 'include' });
+        const res = await apiFetch('/auth/status');
         if (res.status === 401) {
           setGithubUser(null);
           return;
@@ -47,7 +48,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      const res = await apiFetch('/auth/logout', { method: 'POST' });
       if (!res.ok && res.status !== 401) {
         throw new Error('Logout failed');
       }

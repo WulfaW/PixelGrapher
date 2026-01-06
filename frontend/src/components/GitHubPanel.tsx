@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Github, Check, AlertCircle, ChevronsUpDown, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
@@ -64,9 +65,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/auth/status', {
-        credentials: 'include'
-      });
+      const response = await apiFetch('/auth/status');
       const data = await response.json();
       
       if (data.authenticated) {
@@ -98,9 +97,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const fetchUserRepos = async () => {
     setLoadingRepos(true);
     try {
-      const response = await fetch('/api/github/repos', {
-        credentials: 'include'
-      });
+      const response = await apiFetch('/github/repos');
       
       if (response.ok) {
         const data = await response.json();
@@ -141,9 +138,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       setCheckingRepo(true);
       try {
         const [owner, name] = selectedRepo.split('/');
-        const response = await fetch(`/api/github/repo/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`, {
-          credentials: 'include'
-        });
+        const response = await apiFetch(`/github/repo/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`);
 
         if (!response.ok) {
           const data = await response.json();
@@ -187,9 +182,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   const handleDisconnect = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
+      await apiFetch('/auth/logout', {
+        method: 'POST'
       });
       
       setStatus('disconnected');
