@@ -12,7 +12,7 @@ import SavedPatterns from '@/components/SavedPatterns';
 import Footer from '@/components/Footer';
 import { getTemplate } from '@/lib/templates';
 import { useToast } from '@/hooks/use-toast';
-import { getCalendarRange } from '../shared/calendar';
+import { getCalendarRange } from '@shared/calendar';
 
 type CellIntensity = 0 | 1 | 2 | 3 | 4;
 
