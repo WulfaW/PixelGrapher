@@ -8,10 +8,25 @@ import crypto from "crypto";
 
 const app = express();
 
-// CORS configuration
+// CORS configuration - allow development and production
+const allowedOrigins = [
+  "https://pixel-grapher.vercel.app",
+  "http://localhost:5174",
+  "http://localhost:5173",
+  "http://127.0.0.1:5174",
+  "http://127.0.0.1:5173",
+];
+
 app.use(cors({
-  origin: "https://pixel-grapher.vercel.app",
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
 }));
 
 app.use(express.json());
