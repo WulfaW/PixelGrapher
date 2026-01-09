@@ -30,7 +30,53 @@ PixelGrapher/
 
 ---
 
-## 🚀 Deploy
+## � Setup Local Development
+
+### Prerequisites
+- Node.js 16+ (recommended 18+)
+- Git
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/WulfaW/PixelGrapher.git
+cd PixelGrapher
+
+# Frontend
+cd frontend && npm install
+
+# Backend
+cd ../backend && npm install
+```
+
+### 2. GitHub OAuth Setup
+1. Go to https://github.com/settings/developers → OAuth Apps → New OAuth App
+2. Fill in:
+   - **Application name**: PixelGrapher
+   - **Homepage URL**: `http://localhost:5174`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/github/callback`
+3. Copy **Client ID** and generate **Client Secret**
+4. Create `.env` in `backend/` folder:
+```env
+GITHUB_CLIENT_ID=your_client_id
+GITHUB_CLIENT_SECRET=your_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
+SESSION_SECRET=your-random-secret-key
+```
+
+### 3. Run Development Servers
+```bash
+# Terminal 1 - Backend (port 3000)
+cd backend && npm run dev
+
+# Terminal 2 - Frontend (port 5174)
+cd frontend && npm run dev
+```
+
+Open http://localhost:5174 in your browser.
+
+---
+
+## �🚀 Deploy
 
 ### Frontend → Vercel
 1. Root directory: `frontend`
