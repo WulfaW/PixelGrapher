@@ -10,7 +10,7 @@ const MAX_COMMITS = Number(process.env.MAX_COMMITS || 2000);
 const MAX_CONCURRENT_JOBS_PER_USER = Number(process.env.MAX_CONCURRENT_JOBS_PER_USER || 1);
 
 // Track running jobs per user to prevent concurrent long-running processes
-const runningJobs: Map<string, { abort: boolean; startedAt: number } > = new Map();
+const runningJobs: Map<string, { abort: boolean; startedAt: number }> = new Map();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // GitHub OAuth Configuration
@@ -23,12 +23,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       },
       function (accessToken: string, refreshToken: string, profile: any, done: any) {
         // Kullanıcı bilgilerini ve access token'ı session'a kaydet
-        return done(null, { 
-          profile, 
+        return done(null, {
+          profile,
           accessToken,
           createdAt: profile?._json?.created_at,
           username: profile.username,
-          displayName: profile.displayName 
+          displayName: profile.displayName
         });
       }
     )
@@ -53,7 +53,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     passport.authenticate("github", { failureRedirect: "/login" }),
     (req, res) => {
       // Başarılı kimlik doğrulama sonrası frontend'e yönlendir
-      res.redirect("https://pixel-grapher.vercel.app/?github_auth=success");
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      res.redirect(`${frontendUrl}/?github_auth=success`);
     }
   );
 
@@ -101,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const reposData = await response.json();
       const repoNames = reposData.map((repo: any) => repo.full_name);
-      
+
       res.json({ repos: repoNames });
     } catch (error: any) {
       console.error('Error fetching repositories:', error);
@@ -132,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const repoData = await response.json();
-      
+
       res.json({
         name: repoData.name,
         fullName: repoData.full_name,
@@ -166,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Grid'i commit planına çevir
       const commitPlan = generateCommitPlan(grid, year, baseIntensity);
-      
+
       res.json({
         success: true,
         message: "Commit plan generated",
@@ -282,7 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (let i = 0; i < commitPlan.length; i++) {
         const { date, count } = commitPlan[i];
-        
+
         sendProgress({
           status: 'processing',
           message: `Creating commits for ${date}`,
@@ -318,8 +319,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      sendProgress({ 
-        status: 'commits-created', 
+      sendProgress({
+        status: 'commits-created',
         message: 'All commits created locally',
         completed: totalCommitsCreated,
         total: totalCommitsNeeded
@@ -347,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      sendProgress({ 
+      sendProgress({
         status: 'complete',
         message: 'Successfully pushed all commits to GitHub!',
         progress: 100,
@@ -357,21 +358,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Clear heartbeat and job record on normal completion
-      try { clearInterval(heartbeat); } catch {}
+      try { clearInterval(heartbeat); } catch { }
       runningJobs.delete(userKey);
 
       res.end();
 
     } catch (error: any) {
       console.error("Error executing commits:", error);
-      res.write(`data: ${JSON.stringify({ 
+      res.write(`data: ${JSON.stringify({
         status: 'error',
         error: error.message || 'Failed to execute commits'
       })}\n\n`);
       res.end();
-      
+
       // Cleanup immediately on error
-      try { if (heartbeat) clearInterval(heartbeat); } catch {}
+      try { if (heartbeat) clearInterval(heartbeat); } catch { }
       if (gitOps) {
         try {
           gitOps.cleanup();

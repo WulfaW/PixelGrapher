@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Github, Check, AlertCircle, ChevronsUpDown, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, getApiBaseUrl } from '@/lib/api';
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
@@ -40,19 +40,19 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const [joinYear, setJoinYear] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const totalCells = grid ? grid.reduce((total, row) => 
+  const totalCells = grid ? grid.reduce((total, row) =>
     total + row.filter(cell => cell > 0).length, 0
   ) : 0;
-  
-  const totalCommits = grid ? 
-    grid.reduce((total, row) => 
+
+  const totalCommits = grid ?
+    grid.reduce((total, row) =>
       total + row.reduce((sum, cell) => sum + cell, 0), 0
     ) : 0;
 
   // Sayfa yüklendiğinde GitHub bağlantı durumunu kontrol et
   useEffect(() => {
     checkAuthStatus();
-    
+
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
     if (params.get('github_auth') === 'success') {
@@ -67,7 +67,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     try {
       const response = await apiFetch('/auth/status');
       const data = await response.json();
-      
+
       if (data.authenticated) {
         setStatus('connected');
         setUsername(data.username);
@@ -80,10 +80,10 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
             onYearChange?.(currentYear.toString());
           }
         }
-        
+
         // Kullanıcının repolarını backend üzerinden çek
         fetchUserRepos();
-        
+
         toast({
           title: "Connected to GitHub!",
           description: `Welcome, ${data.displayName || data.username}`,
@@ -98,7 +98,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     setLoadingRepos(true);
     try {
       const response = await apiFetch('/github/repos');
-      
+
       if (response.ok) {
         const data = await response.json();
         setRepos(data.repos || []);
@@ -120,7 +120,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const handleGitHubLogin = () => {
     setStatus('connecting');
     // Backend OAuth endpoint'ine yönlendir
-    window.location.href = 'https://pixelgrapher-production.up.railway.app/api/auth/github';
+    window.location.href = `${getApiBaseUrl()}/auth/github`;
   };
 
   const handleGenerate = async () => {
@@ -152,7 +152,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
         }
 
         const repoData = await response.json();
-        
+
         // Check if repo is private (commits won't show on public profile)
         if (repoData.private) {
           toast({
@@ -185,12 +185,12 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       await apiFetch('/auth/logout', {
         method: 'POST'
       });
-      
+
       setStatus('disconnected');
       setUsername('');
       setSelectedRepo('');
       setRepos([]);
-      
+
       toast({
         title: "Disconnected",
         description: "Successfully disconnected from GitHub",
@@ -289,58 +289,58 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
                   </div>
                 ) : (
                   <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={open}
-                      className="w-full justify-between"
-                      data-testid="select-repository"
-                    >
-                      {selectedRepo || "Choose a repository..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput 
-                        placeholder="Search repositories..." 
-                        value={searchQuery}
-                        onValueChange={setSearchQuery}
-                      />
-                      <CommandList>
-                        <CommandEmpty>
-                          {repos.length === 0 ? "Loading repositories..." : "No repository found."}
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {repos
-                            .filter(repo => 
-                              repo.toLowerCase().includes(searchQuery.toLowerCase())
-                            )
-                            .map((repo) => (
-                              <CommandItem
-                                key={repo}
-                                value={repo}
-                                onSelect={(currentValue) => {
-                                  setSelectedRepo(currentValue === selectedRepo ? "" : currentValue);
-                                  setOpen(false);
-                                  setSearchQuery('');
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedRepo === repo ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {repo}
-                              </CommandItem>
-                            ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between"
+                        data-testid="select-repository"
+                      >
+                        {selectedRepo || "Choose a repository..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search repositories..."
+                          value={searchQuery}
+                          onValueChange={setSearchQuery}
+                        />
+                        <CommandList>
+                          <CommandEmpty>
+                            {repos.length === 0 ? "Loading repositories..." : "No repository found."}
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {repos
+                              .filter(repo =>
+                                repo.toLowerCase().includes(searchQuery.toLowerCase())
+                              )
+                              .map((repo) => (
+                                <CommandItem
+                                  key={repo}
+                                  value={repo}
+                                  onSelect={(currentValue) => {
+                                    setSelectedRepo(currentValue === selectedRepo ? "" : currentValue);
+                                    setOpen(false);
+                                    setSearchQuery('');
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedRepo === repo ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {repo}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 )}
               </div>
 
