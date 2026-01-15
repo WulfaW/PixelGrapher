@@ -7,7 +7,7 @@ import { log } from "./vite.js";
 import crypto from "crypto";
 
 const app = express();
-app.set("trust proxy", true); // Trust all proxies for Railway/Vercel chain
+app.set("trust proxy", 1);
 
 // CORS configuration - allow development and production
 const allowedOrigins = [
@@ -28,7 +28,6 @@ app.use(cors({
     if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('.railway.app')) {
       callback(null, true);
     } else {
-      console.log('CORS blocked origin:', origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
@@ -41,13 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Generate session secret if not provided
 const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
-const isProduction = process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT;
-
-console.log('Session Config:', {
-  isProduction,
-  sameSite: isProduction ? 'none' : 'lax',
-  secure: isProduction
-});
+const isProduction = process.env.NODE_ENV === "production";
 
 // Session middleware - GitHub OAuth için gerekli
 app.use(
@@ -55,12 +48,12 @@ app.use(
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    proxy: true, // Important for Railway
+    proxy: true,
     cookie: {
-      secure: isProduction, // Must be true for sameSite: 'none'
+      secure: isProduction,
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: isProduction ? "none" : "lax", // 'none' required for cross-site (Vercel->Railway)
+      sameSite: isProduction ? "none" : "lax",
     },
   })
 );
