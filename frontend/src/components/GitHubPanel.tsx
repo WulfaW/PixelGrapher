@@ -119,10 +119,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   const handleGitHubLogin = () => {
     setStatus('connecting');
-    // Force direct URL to production backend to bypass any environment variable issues
-    // This ensures we go to Railway, not Vercel (frontend)
-    const productionBackend = 'https://pixelgrapher-production.up.railway.app';
-    window.location.href = `${productionBackend}/api/auth/github`;
+    // Force direct URL to production backend
+    window.location.href = 'https://pixelgrapher-production.up.railway.app/api/auth/github';
   };
 
   const handleGenerate = async () => {
