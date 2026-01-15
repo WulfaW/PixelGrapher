@@ -7,8 +7,8 @@ export function getApiBaseUrl(): string {
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     return 'http://localhost:3000';
   }
-  // Default to current origin
-  return window.location.origin;
+  // Default to known production backend if env var is missing
+  return 'https://pixelgrapher-production.up.railway.app';
 }
 
 export async function apiFetch(
@@ -17,7 +17,7 @@ export async function apiFetch(
 ): Promise<Response> {
   const baseUrl = getApiBaseUrl();
   const url = `${baseUrl}/api${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-  
+
   return fetch(url, {
     ...options,
     credentials: 'include',
