@@ -53,17 +53,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     passport.authenticate("github", { failureRedirect: "/login" }),
     (req, res) => {
       // Başarılı kimlik doğrulama sonrası frontend'e yönlendir
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const rawFrontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      let targetUrl = rawFrontendUrl;
+
+      try {
+        const urlObj = new URL(rawFrontendUrl);
+        targetUrl = urlObj.origin;
+      } catch (e) {
+        console.error("Invalid FRONTEND_URL:", rawFrontendUrl);
+      }
 
       // Explicitly save session before redirect to ensure cookie is set
       req.session.save((err) => {
         if (err) {
           console.error("Session save error:", err);
-          return res.redirect(`${frontendUrl}?error=session_save_failed`);
+          return res.redirect(`${targetUrl}?error=session_save_failed`);
         }
         // Redirect strictly to root path where the app lives
         // No query params, avoiding router confusion or 404s
-        res.redirect(frontendUrl);
+        res.redirect(targetUrl);
       });
     }
   );
