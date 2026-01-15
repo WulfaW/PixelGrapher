@@ -7,7 +7,7 @@ import { log } from "./vite.js";
 import crypto from "crypto";
 
 const app = express();
-app.set("trust proxy", 1); // Trust first proxy (Railway load balancer) for secure cookies
+app.set("trust proxy", true); // Trust all proxies for Railway/Vercel chain
 
 // CORS configuration - allow development and production
 const allowedOrigins = [
@@ -41,6 +41,13 @@ app.use(express.urlencoded({ extended: false }));
 
 // Generate session secret if not provided
 const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+const isProduction = process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT;
+
+console.log('Session Config:', {
+  isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  secure: isProduction
+});
 
 // Session middleware - GitHub OAuth için gerekli
 app.use(
@@ -50,10 +57,10 @@ app.use(
     saveUninitialized: false,
     proxy: true, // Important for Railway
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Must be true for sameSite: 'none'
+      secure: isProduction, // Must be true for sameSite: 'none'
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'none' required for cross-site (Vercel->Railway)
+      sameSite: isProduction ? "none" : "lax", // 'none' required for cross-site (Vercel->Railway)
     },
   })
 );
