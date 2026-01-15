@@ -54,7 +54,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     (req, res) => {
       // Başarılı kimlik doğrulama sonrası frontend'e yönlendir
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      res.redirect(`${frontendUrl}/?github_auth=success`);
+      const redirectUrl = new URL(frontendUrl);
+      redirectUrl.searchParams.set("github_auth", "success");
+      res.redirect(redirectUrl.toString());
     }
   );
 
