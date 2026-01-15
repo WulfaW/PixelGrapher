@@ -120,7 +120,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const handleGitHubLogin = () => {
     setStatus('connecting');
     // Backend OAuth endpoint'ine yönlendir
-    window.location.href = '/api/auth/github';
+    window.location.href = 'https://pixelgrapher-production.up.railway.app/api/auth/github';
   };
 
   const handleGenerate = async () => {
