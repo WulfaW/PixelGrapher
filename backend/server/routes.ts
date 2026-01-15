@@ -53,7 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     passport.authenticate("github", { failureRedirect: "/login" }),
     (req, res) => {
       // Başarılı kimlik doğrulama sonrası frontend'e yönlendir
-      res.redirect("/?github_auth=success");
+      res.redirect("https://pixel-grapher.vercel.app/?github_auth=success");
     }
   );
 
