@@ -119,14 +119,10 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   const handleGitHubLogin = () => {
     setStatus('connecting');
-    // Backend OAuth endpoint'ine yönlendir
-    const baseUrl = getApiBaseUrl();
-    const loginUrl = new URL('/start/auth/github', baseUrl).toString().replace('/start/auth', '/auth'); // Fix path join issue
-    // Just use simple string concatenation which is safer if base has no trailing slash, but lets rely on URL object to be safe
-    // URL constructor might be tricky if base is not what we expect
-    // Let's use robust manual join:
-    const safeBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    window.location.href = `${safeBase}/auth/github`;
+    // Force direct URL to production backend to bypass any environment variable issues
+    // This ensures we go to Railway, not Vercel (frontend)
+    const productionBackend = 'https://pixelgrapher-production.up.railway.app';
+    window.location.href = `${productionBackend}/api/auth/github`;
   };
 
   const handleGenerate = async () => {
