@@ -7,6 +7,7 @@ import { log } from "./vite.js";
 import crypto from "crypto";
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (Railway load balancer) for secure cookies
 
 // CORS configuration - allow development and production
 const allowedOrigins = [
@@ -21,9 +22,13 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Mobile apps or server-to-server requests
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('.railway.app')) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
@@ -43,11 +48,12 @@ app.use(
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
+    proxy: true, // Important for Railway
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 saat
+      secure: process.env.NODE_ENV === "production", // Must be true for sameSite: 'none'
+      maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'none' required for cross-site (Vercel->Railway)
     },
   })
 );
