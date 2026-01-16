@@ -7,8 +7,8 @@ export function getApiBaseUrl(): string {
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     return 'http://localhost:3000';
   }
-  // Default to known production backend if env var is missing
-  return 'https://pixelgrapher-production.up.railway.app';
+  // Default to Render.com backend
+  return 'https://pixelgrapher-backend.onrender.com';
 }
 
 export async function apiFetch(
