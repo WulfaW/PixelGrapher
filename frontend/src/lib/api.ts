@@ -8,7 +8,7 @@ export function getApiBaseUrl(): string {
     return 'http://localhost:3000';
   }
   // Default to Render.com backend
-  return 'https://pixelgrapher-backend.onrender.com';
+  return 'https://pixelgrapher.onrender.com';
 }
 
 export async function apiFetch(
