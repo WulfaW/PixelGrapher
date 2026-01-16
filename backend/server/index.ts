@@ -9,10 +9,9 @@ import crypto from "crypto";
 const app = express();
 app.set("trust proxy", 1);
 
-// CORS configuration - temporarily allow all origins for debugging
-// TODO: Restore strict CORS after confirming server is stable
+// CORS configuration - MUST be specific origin for credentials
 app.use(cors({
-  origin: true, // Allow all origins temporarily
+  origin: process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app',
   credentials: true,
   optionsSuccessStatus: 200,
 }));
@@ -22,20 +21,20 @@ app.use(express.urlencoded({ extended: false }));
 
 // Generate session secret if not provided
 const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
-const isProduction = process.env.NODE_ENV === "production";
 
-// Session middleware - GitHub OAuth için gerekli
+// Session middleware - CRITICAL: Cross-site cookie settings for Railway + Vercel
 app.use(
   session({
+    name: 'pixelgrapher.sid',
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     proxy: true,
     cookie: {
-      secure: isProduction,
-      maxAge: 24 * 60 * 60 * 1000,
+      secure: true, // MUST be true for cross-site
+      sameSite: 'none', // MUST be 'none' for cross-site
       httpOnly: true,
-      sameSite: isProduction ? "none" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
