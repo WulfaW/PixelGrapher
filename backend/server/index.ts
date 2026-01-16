@@ -76,7 +76,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Error handler - must be defined BEFORE routes
+  const server = await registerRoutes(app);
+
+  // Error handler - must be defined AFTER routes
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -85,8 +87,6 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     // Don't throw here - it crashes the server!
   });
-
-  const server = await registerRoutes(app);
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.
