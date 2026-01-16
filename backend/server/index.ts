@@ -9,28 +9,10 @@ import crypto from "crypto";
 const app = express();
 app.set("trust proxy", 1);
 
-// CORS configuration - allow development and production
-const allowedOrigins = [
-  "https://pixel-grapher.vercel.app",
-  "https://pixelgrapher.vercel.app",
-  process.env.FRONTEND_URL || "",
-  "http://localhost:5174",
-  "http://localhost:5173",
-  "http://127.0.0.1:5174",
-  "http://127.0.0.1:5173",
-];
-
+// CORS configuration - temporarily allow all origins for debugging
+// TODO: Restore strict CORS after confirming server is stable
 app.use(cors({
-  origin: (origin, callback) => {
-    // Mobile apps or server-to-server requests
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('.railway.app')) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: true, // Allow all origins temporarily
   credentials: true,
   optionsSuccessStatus: 200,
 }));
@@ -57,6 +39,11 @@ app.use(
     },
   })
 );
+
+// Health check endpoint - simple test to verify server is running
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -89,15 +76,17 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
-
+  // Error handler - must be defined BEFORE routes
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    console.error('Server error:', err);
     res.status(status).json({ message });
-    throw err;
+    // Don't throw here - it crashes the server!
   });
+
+  const server = await registerRoutes(app);
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.
