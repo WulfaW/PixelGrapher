@@ -17,9 +17,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   passport.use(
     new GitHubStrategy(
       {
-        clientID: process.env.GITHUB_CLIENT_ID || "",
-        clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
-        callbackURL: process.env.GITHUB_CALLBACK_URL || "http://localhost:5000/api/auth/github/callback",
+        clientID: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+        callbackURL: process.env.GITHUB_CALLBACK_URL!,
       },
       function (accessToken: string, refreshToken: string, profile: any, done: any) {
         // Kullanıcı bilgilerini ve access token'ı session'a kaydet
@@ -50,10 +50,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get(
     "/api/auth/github/callback",
-    passport.authenticate("github", { failureRedirect: "/login" }),
+    passport.authenticate("github", {
+      failureRedirect: `${process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app'}?error=auth_failed`
+    }),
     (req, res) => {
       // Başarılı kimlik doğrulama sonrası frontend'e yönlendir
-      const rawFrontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const rawFrontendUrl = process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app';
       let targetUrl = rawFrontendUrl;
 
       try {
