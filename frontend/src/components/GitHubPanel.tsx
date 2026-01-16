@@ -119,8 +119,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   const handleGitHubLogin = () => {
     setStatus('connecting');
-    // Force direct URL to production backend
-    window.location.href = 'https://pixelgrapher-production.up.railway.app/api/auth/github';
+    // Use API base URL helper for consistency
+    window.location.href = `${getApiBaseUrl()}/api/auth/github`;
   };
 
   const handleGenerate = async () => {

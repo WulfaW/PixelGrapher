@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Github, Moon, Sun, Star, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, getApiBaseUrl } from '@/lib/api';
 
 export default function Header() {
   const [isDark, setIsDark] = useState(() => {
@@ -61,14 +61,14 @@ export default function Header() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (!element) return;
-    
+
     // Optimized smooth scroll
     const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - 80;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     const duration = 500;
     let start: number | null = null;
-    
+
     const animation = (currentTime: number) => {
       if (start === null) start = currentTime;
       const timeElapsed = currentTime - start;
@@ -76,14 +76,14 @@ export default function Header() {
       const easeInOutCubic = progress < 0.5
         ? 4 * progress * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-      
+
       window.scrollTo(0, startPosition + distance * easeInOutCubic);
-      
+
       if (timeElapsed < duration) {
         requestAnimationFrame(animation);
       }
     };
-    
+
     requestAnimationFrame(animation);
   };
 
@@ -100,16 +100,16 @@ export default function Header() {
         </div>
 
         <nav className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => scrollToSection('how-it-works')}
             data-testid="button-how-it-works"
           >
             How it Works
           </Button>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => scrollToSection('templates')}
             data-testid="button-templates"
@@ -133,7 +133,7 @@ export default function Header() {
             <Button
               size="sm"
               className="inline-flex bg-muted text-muted-foreground hover:bg-muted/80"
-              onClick={() => { window.location.href = '/api/auth/github'; }}
+              onClick={() => { window.location.href = `${getApiBaseUrl()}/api/auth/github`; }}
               data-testid="button-login-github-header"
             >
               <Github className="w-4 h-4 mr-2" />
