@@ -24,6 +24,7 @@
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-local": "^1.0.0",
+    "typescript": "5.6.3",
     "ws": "^8.18.0",
     "zod": "^3.24.2",
     "zod-validation-error": "^3.4.0"
@@ -39,7 +40,6 @@
     "@types/ws": "^8.5.13",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.5",
-    "typescript": "5.6.3",
     "vitest": "^1.6.0",
     "terser": "^5.16.0"
   }
