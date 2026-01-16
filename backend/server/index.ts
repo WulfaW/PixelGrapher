@@ -92,6 +92,10 @@ app.use((req, res, next) => {
   // Backend API server only - frontend is deployed separately on Vercel
   const port = parseInt(process.env.PORT || '5000', 10);
   server.listen(port, "0.0.0.0", () => {
+    console.log(`✅ Server started successfully`);
+    console.log(`🚀 Listening on http://0.0.0.0:${port}`);
+    console.log(`🔗 Health check: http://0.0.0.0:${port}/health`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     log(`serving on port ${port}`);
   });
 })();
