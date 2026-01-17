@@ -43,7 +43,11 @@ export default function Header() {
     // Check for auth success parameter from OAuth redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      // Hemen backend'den gerçek bilgileri al
+      // Optimistic update: Hemen logged-in state'ine geç
+      // Gerçek username gelene kadar geçici bir değer göster
+      setGithubUser('Loading...');
+
+      // Ardından backend'den gerçek bilgileri al
       checkStatus();
     } else {
       // Normal sayfa yüklemesinde auth durumunu kontrol et
