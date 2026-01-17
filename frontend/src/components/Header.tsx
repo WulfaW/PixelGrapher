@@ -42,6 +42,13 @@ export default function Header() {
 
     checkStatus();
 
+    // Check for auth success parameter from OAuth redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('auth_success') === 'true') {
+      // Delay check to ensure session is fully established
+      setTimeout(checkStatus, 500);
+    }
+
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
     const handleFocus = () => {
       checkStatus();

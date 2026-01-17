@@ -55,7 +55,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
-    if (params.get('github_auth') === 'success') {
+    if (params.get('auth_success') === 'true') {
       // URL'i temizle
       window.history.replaceState({}, '', window.location.pathname);
       // Auth durumunu tekrar kontrol et
