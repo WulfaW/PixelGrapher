@@ -58,8 +58,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     if (params.get('auth_success') === 'true') {
       // URL'i temizle
       window.history.replaceState({}, '', window.location.pathname);
-      // Auth durumunu tekrar kontrol et (1s delay for session establishment)
-      setTimeout(checkAuthStatus, 1000);
+      // Auth durumunu tekrar kontrol et (2s delay for session establishment)
+      setTimeout(() => checkAuthStatus(true), 2000);
     }
 
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
@@ -74,12 +74,14 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     };
   }, []);
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = async (showWelcome: boolean = false) => {
     try {
       const response = await apiFetch('/auth/status');
       const data = await response.json();
 
       if (data.authenticated) {
+        const wasDisconnected = status === 'disconnected' || status === 'connecting';
+
         setStatus('connected');
         setUsername(data.username);
         if (data.createdAt) {
@@ -95,10 +97,13 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
         // Kullanıcının repolarını backend üzerinden çek
         fetchUserRepos();
 
-        toast({
-          title: "Connected to GitHub!",
-          description: `Welcome, ${data.displayName || data.username}`,
-        });
+        // Sadece durumun değiştiği zaman veya açıkça istendiğinde toast göster
+        if (showWelcome || wasDisconnected) {
+          toast({
+            title: "Connected to GitHub!",
+            description: `Welcome, ${data.displayName || data.username}`,
+          });
+        }
       }
     } catch (error) {
       console.error('Auth status check failed:', error);
