@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import cors from "cors";
-import "./types/express-session.js";
 import { registerRoutes } from "./routes.js";
 import { log } from "./vite.js";
 import crypto from "crypto";
