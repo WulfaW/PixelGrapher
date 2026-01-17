@@ -45,8 +45,8 @@ export default function Header() {
     // Check for auth success parameter from OAuth redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      // Delay check to ensure session is fully established (2s for slower connections)
-      setTimeout(checkStatus, 2000);
+      // Session backend'de zaten kaydedildi, hemen kontrol et
+      checkStatus();
     }
 
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)

@@ -58,8 +58,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     if (params.get('auth_success') === 'true') {
       // URL'i temizle
       window.history.replaceState({}, '', window.location.pathname);
-      // Auth durumunu tekrar kontrol et (2s delay for session establishment)
-      setTimeout(() => checkAuthStatus(true), 2000);
+      // Auth durumunu HEMEN kontrol et - session backend'de zaten kaydedildi
+      checkAuthStatus(true);
     }
 
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
