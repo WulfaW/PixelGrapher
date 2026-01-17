@@ -39,7 +39,19 @@ export default function Header() {
         console.error('Failed to fetch auth status', err);
       }
     };
+
     checkStatus();
+
+    // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
+    const handleFocus = () => {
+      checkStatus();
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const toggleTheme = () => {

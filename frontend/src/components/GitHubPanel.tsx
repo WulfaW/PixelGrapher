@@ -61,6 +61,17 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       // Auth durumunu tekrar kontrol et
       setTimeout(checkAuthStatus, 500);
     }
+
+    // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
+    const handleFocus = () => {
+      checkAuthStatus();
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const checkAuthStatus = async () => {
