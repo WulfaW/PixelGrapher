@@ -40,12 +40,17 @@ export default function Header() {
       }
     };
 
-    checkStatus();
-
     // Check for auth success parameter from OAuth redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      // Session backend'de zaten kaydedildi, hemen kontrol et
+      // State'i ANINDA güncelle (optimistic update)
+      // Gerçek username backend'den gelene kadar geçici olarak "..." göster
+      setGithubUser('...');
+
+      // Ardından backend'den gerçek bilgileri al
+      checkStatus();
+    } else {
+      // Normal sayfa yüklemesinde auth durumunu kontrol et
       checkStatus();
     }
 

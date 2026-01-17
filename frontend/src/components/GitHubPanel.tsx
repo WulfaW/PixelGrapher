@@ -51,15 +51,20 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
   // Sayfa yüklendiğinde GitHub bağlantı durumunu kontrol et
   useEffect(() => {
-    checkAuthStatus();
-
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
       // URL'i temizle
       window.history.replaceState({}, '', window.location.pathname);
-      // Auth durumunu HEMEN kontrol et - session backend'de zaten kaydedildi
+
+      // State'i ANINDA güncelle (optimistic update)
+      setStatus('connected');
+
+      // Ardından backend'den gerçek bilgileri al
       checkAuthStatus(true);
+    } else {
+      // Normal sayfa yüklemesinde auth durumunu kontrol et
+      checkAuthStatus();
     }
 
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
