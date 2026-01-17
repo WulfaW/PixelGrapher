@@ -85,8 +85,6 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       const data = await response.json();
 
       if (data.authenticated) {
-        const wasDisconnected = status === 'disconnected' || status === 'connecting';
-
         setStatus('connected');
         setUsername(data.username);
         if (data.createdAt) {
@@ -102,8 +100,8 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
         // Kullanıcının repolarını backend üzerinden çek
         fetchUserRepos();
 
-        // Sadece durumun değiştiği zaman veya açıkça istendiğinde toast göster
-        if (showWelcome || wasDisconnected) {
+        // showWelcome true ise mutlaka toast göster (OAuth callback'den geldiğimizde)
+        if (showWelcome) {
           toast({
             title: "Connected to GitHub!",
             description: `Welcome, ${data.displayName || data.username}`,
