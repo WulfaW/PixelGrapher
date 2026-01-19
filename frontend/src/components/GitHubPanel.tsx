@@ -100,6 +100,11 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
         // Kullanıcının repolarını backend üzerinden çek
         fetchUserRepos();
 
+        // Dispatch custom event to notify Header component
+        window.dispatchEvent(new CustomEvent('github-auth-success', {
+          detail: { username: data.username, displayName: data.displayName }
+        }));
+
         // showWelcome true ise mutlaka toast göster (OAuth callback'den geldiğimizde)
         if (showWelcome) {
           toast({

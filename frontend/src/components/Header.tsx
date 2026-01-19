@@ -54,6 +54,16 @@ export default function Header() {
       checkStatus();
     }
 
+    // Listen for custom event from GitHubPanel when auth succeeds
+    const handleAuthSuccess = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.username) {
+        setGithubUser(customEvent.detail.username);
+      }
+    };
+
+    window.addEventListener('github-auth-success', handleAuthSuccess);
+
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
     const handleFocus = () => {
       checkStatus();
@@ -62,6 +72,7 @@ export default function Header() {
     window.addEventListener('focus', handleFocus);
 
     return () => {
+      window.removeEventListener('github-auth-success', handleAuthSuccess);
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
