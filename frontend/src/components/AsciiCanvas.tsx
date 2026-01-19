@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save } from 'lucide-react';
+import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { usePatternStorage } from '@/hooks/use-pattern-storage';
 import { dateForCell, getCalendarRange } from '../shared/calendar';
 import GitHubPanel from './GitHubPanel';
+import html2canvas from 'html2canvas';
 
 const DAYS_PER_WEEK = 7;
 
@@ -35,6 +36,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
   const [isDrawing, setIsDrawing] = useState(false);
   const [history, setHistory] = useState<CellIntensity[][][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const canvasRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Initialize history and notify parent once on mount
@@ -86,9 +88,9 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
     const handleKeyPress = (e: KeyboardEvent) => {
       // Only trigger if not typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
+
       const key = e.key.toLowerCase();
-      
+
       if (e.ctrlKey || e.metaKey) {
         if (key === 's') {
           e.preventDefault();
@@ -229,11 +231,11 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
 
   const handleQuickSave = () => {
     try {
-      const timestamp = new Date().toLocaleString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const timestamp = new Date().toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
       const name = `Pattern ${timestamp}`;
       savePattern(name, grid, yearInt);
@@ -257,7 +259,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
       year: yearInt,
       exportDate: new Date().toISOString()
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -267,7 +269,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "Pattern Exported",
       description: "Your pattern has been downloaded as JSON",
@@ -278,30 +280,30 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
-    
+
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target?.result as string);
-          
+
           if (!data.grid || !Array.isArray(data.grid)) {
             throw new Error('Invalid grid data');
           }
-          
+
           // Validate grid structure
           if (data.grid.length !== DAYS_PER_WEEK) {
             throw new Error('Invalid grid dimensions');
           }
-          
+
           const importedGrid = data.grid as CellIntensity[][];
           setGrid(importedGrid);
           onGridChange?.(importedGrid);
           addToHistory(importedGrid);
-          
+
           toast({
             title: "Pattern Imported",
             description: "Your pattern has been loaded successfully",
@@ -314,11 +316,63 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
           });
         }
       };
-      
+
       reader.readAsText(file);
     };
-    
+
     input.click();
+  };
+
+  const handleExportImage = async () => {
+    if (!canvasRef.current) {
+      toast({
+        title: "Export Failed",
+        description: "Canvas not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Find the canvas grid element
+      const canvasElement = canvasRef.current;
+
+      // Use html2canvas to capture the canvas
+      const canvas = await html2canvas(canvasElement, {
+        backgroundColor: '#000000', // Dark background
+        scale: 3, // Higher quality
+        logging: false,
+        useCORS: true,
+      });
+
+      // Convert to blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          throw new Error('Failed to create image');
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pixelgrapher-pattern-${yearInt || 'custom'}-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: "Image Exported",
+          description: "Your pattern has been downloaded as PNG",
+        });
+      }, 'image/png');
+    } catch (error) {
+      console.error('Export image error:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export image. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -428,6 +482,16 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
                 <Save className="w-4 h-4 mr-2" />
                 Save
               </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleExportImage}
+                data-testid="button-export-image"
+                title="Export as Image (PNG)"
+              >
+                <Image className="w-4 h-4 mr-2" />
+                Export PNG
+              </Button>
             </div>
 
             <div className="flex items-center gap-2">
@@ -456,7 +520,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
           </div>
 
           <div className="overflow-x-auto flex-1">
-            <div className="inline-block border border-border rounded-md p-3 h-full">
+            <div ref={canvasRef} className="inline-block border border-border rounded-md p-3 h-full">
               <div className="flex gap-1">
                 {Array.from({ length: grid[0]?.length || weeksCount }).map((_, weekIndex) => (
                   <div key={weekIndex} className="flex flex-col gap-1">
@@ -500,7 +564,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
 
         {/* GitHub Panel on the right */}
         <div>
-          <GitHubPanel 
+          <GitHubPanel
             onGenerate={onGenerate}
             grid={grid}
             onYearChange={onYearChange}
