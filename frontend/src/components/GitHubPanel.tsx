@@ -54,18 +54,14 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      // URL'i temizle
+      // URL'i temizle ve sayfayı yenile - bu en garantili çözüm
       window.history.replaceState({}, '', window.location.pathname);
-
-      // State'i ANINDA güncelle (optimistic update)
-      setStatus('connected');
-
-      // Ardından backend'den gerçek bilgileri al
-      checkAuthStatus(true);
-    } else {
-      // Normal sayfa yüklemesinde auth durumunu kontrol et
-      checkAuthStatus();
+      window.location.reload();
+      return; // Reload edildikten sonra devam etmeye gerek yok
     }
+
+    // Normal sayfa yüklemesinde auth durumunu kontrol et
+    checkAuthStatus();
 
     // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
     const handleFocus = () => {
@@ -99,11 +95,6 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
         // Kullanıcının repolarını backend üzerinden çek
         fetchUserRepos();
-
-        // Dispatch custom event to notify Header component
-        window.dispatchEvent(new CustomEvent('github-auth-success', {
-          detail: { username: data.username, displayName: data.displayName }
-        }));
 
         // showWelcome true ise mutlaka toast göster (OAuth callback'den geldiğimizde)
         if (showWelcome) {

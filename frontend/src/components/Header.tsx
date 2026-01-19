@@ -64,7 +64,7 @@ export default function Header() {
 
     window.addEventListener('github-auth-success', handleAuthSuccess);
 
-    // Re-check auth status when window regains focus (e.g., after GitHub OAuth redirect)
+    // Re-check auth status when window regains focus
     const handleFocus = () => {
       checkStatus();
     };
@@ -72,7 +72,6 @@ export default function Header() {
     window.addEventListener('focus', handleFocus);
 
     return () => {
-      window.removeEventListener('github-auth-success', handleAuthSuccess);
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
