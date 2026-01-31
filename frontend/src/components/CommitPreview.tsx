@@ -86,7 +86,13 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
   );
 
   return (
-    <Card className={cn('p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800', className)}>
+    <Card
+      className={cn(
+        'p-4 border transition-colors duration-300',
+        previewTheme === 'dark' ? 'bg-[#0d1117] border-[#30363d]' : 'bg-white border-slate-200',
+        className
+      )}
+    >
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -123,27 +129,26 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
             previewTheme === 'dark' ? "bg-[#0d1117] border-[#30363d]" : "bg-white border-[#d0d7de]"
           )}
         >
-          <div>
+          <div className="w-full">
             {/* Month Labels - align with grid */}
             <div className="flex gap-0 mb-2">
               {/* Spacer for day labels column */}
               <div className="w-8 flex-shrink-0" /> {/* Reduced width to align better */}
               {/* Month labels - no wrapper, render directly */}
-              <div className="flex gap-[3px]">
-                {/* Initial spacing to align Jan */}
-                {Array.from({ length: 2 }).map((_, idx) => (
-                  <div key={`spacer-${idx}`} className="w-[11px]" />
-                ))}
+              <div className="flex w-full justify-between">
                 {monthBoundaries.map((boundary, idx) => {
+                  // Calculate relative width for each month label based on weeks count
                   const monthWeeks = boundary.endWeek - boundary.week;
-                  return Array.from({ length: monthWeeks }).map((_, weekIdx) => (
+                  const flexBasis = `${(monthWeeks / WEEKS) * 100}%`;
+                  return (
                     <div
-                      key={`month-${idx}-week-${weekIdx}`}
-                      className="w-[11px] text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center flex items-start overflow-hidden"
+                      key={`month-label-${idx}`}
+                      style={{ flexBasis }}
+                      className="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-left overflow-hidden uppercase tracking-tighter"
                     >
-                      {weekIdx === 0 ? boundary.month : ''}
+                      {boundary.month.slice(0, 3)}
                     </div>
-                  ));
+                  );
                 })}
               </div>
             </div>
@@ -163,13 +168,13 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
               </div>
 
               {/* Heatmap Grid */}
-              <div className="flex gap-[3px]">
+              <div className="flex justify-between w-full h-full gap-px">
                 {Array.from({ length: WEEKS }).map((_, weekIndex) => (
-                  <div key={weekIndex} className="flex flex-col gap-[3px]">
+                  <div key={weekIndex} className="flex flex-col gap-px flex-1">
                     {Array.from({ length: DAYS_PER_WEEK }).map((_, dayIndex) => (
                       <div
                         key={`${dayIndex}-${weekIndex}`}
-                        className="w-[11px] h-[11px] rounded-[2px] cursor-default transition-colors duration-200"
+                        className="w-full aspect-square rounded-[1px] cursor-default transition-colors duration-200"
                         style={{ backgroundColor: getCellColor(displayGrid[dayIndex][weekIndex]) }}
                         title={`${displayGrid[dayIndex][weekIndex]} commits on ${monthBoundaries.find(b => weekIndex >= b.week && weekIndex < b.endWeek)?.month} (Week ${weekIndex + 1})`}
                         data-testid={`preview-cell-${dayIndex}-${weekIndex}`}
