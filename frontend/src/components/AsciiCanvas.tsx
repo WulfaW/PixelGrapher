@@ -519,18 +519,18 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
             </div>
           </div>
 
-          <div className="overflow-x-auto flex-1">
-            <div ref={canvasRef} className="inline-block border border-border rounded-md p-3 h-full">
-              <div className="flex gap-1">
+          <div className="w-full">
+            <div ref={canvasRef} className="border border-border rounded-md p-3 w-full overflow-hidden">
+              <div className="flex justify-between w-full h-full gap-px">
                 {Array.from({ length: grid[0]?.length || weeksCount }).map((_, weekIndex) => (
-                  <div key={weekIndex} className="flex flex-col gap-1">
+                  <div key={weekIndex} className="flex flex-col gap-px flex-1">
                     {Array.from({ length: DAYS_PER_WEEK }).map((_, dayIndex) => (
                       <div
                         key={`${dayIndex}-${weekIndex}`}
                         className={cn(
-                          'w-4 h-4 rounded-sm transition-all duration-200',
+                          'w-full aspect-square rounded-[1px] transition-all duration-200',
                           isCellValid(dayIndex, weekIndex)
-                            ? cn('cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:scale-110', getCellColor(grid[dayIndex][weekIndex]))
+                            ? cn('cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:scale-125 hover:z-10', getCellColor(grid[dayIndex][weekIndex]))
                             : 'cursor-not-allowed bg-muted/30'
                         )}
                         onMouseDown={() => {
