@@ -174,7 +174,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
                     {Array.from({ length: DAYS_PER_WEEK }).map((_, dayIndex) => (
                       <div
                         key={`${dayIndex}-${weekIndex}`}
-                        className="w-full aspect-square rounded-[1px] cursor-default transition-colors duration-200"
+                        className="w-full aspect-square rounded-sm cursor-default transition-colors duration-200"
                         style={{ backgroundColor: getCellColor(displayGrid[dayIndex][weekIndex]) }}
                         title={`${displayGrid[dayIndex][weekIndex]} commits on ${monthBoundaries.find(b => weekIndex >= b.week && weekIndex < b.endWeek)?.month} (Week ${weekIndex + 1})`}
                         data-testid={`preview-cell-${dayIndex}-${weekIndex}`}
@@ -195,7 +195,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
               {[0, 1, 2, 3, 4].map((level) => (
                 <div
                   key={level}
-                  className="w-[10px] h-[10px] rounded-[2px]"
+                  className="w-[10px] h-[10px] rounded-sm"
                   style={{ backgroundColor: getCellColor(level as CellIntensity) }}
                   title={`${level} commits`}
                 />
