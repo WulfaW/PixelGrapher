@@ -219,7 +219,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const handleResetRepo = async () => {
     if (!selectedRepo) return;
 
-    if (!window.confirm(`Are you sure you want to RESET "${selectedRepo}"? \n\nTHIS WILL DELETE ALL HISTORY AND COMMITS IN THIS REPOSITORY.\n\nType 'DELETE' to confirm.`)) {
+    if (!window.confirm(`Are you sure you want to RESET "${selectedRepo}"? \n\nThis will DELETE ALL HISTORY and start fresh.\n\n⚠️ THIS ACTION CANNOT BE UNDONE.`)) {
       return;
     }
 
