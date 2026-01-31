@@ -12,6 +12,7 @@ import SavedPatterns from '@/components/SavedPatterns';
 import Footer from '@/components/Footer';
 import { getTemplate } from '@/lib/templates';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 import { getCalendarRange } from '@shared/calendar';
 
 type CellIntensity = 0 | 1 | 2 | 3 | 4;
@@ -49,31 +50,31 @@ export default function Home() {
 
   const smoothScrollTo = (element: HTMLElement | null) => {
     if (!element) return;
-    
+
     // Use native smooth scroll with requestAnimationFrame for better performance
     const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - 80;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     const duration = 600; // ms
     let start: number | null = null;
-    
+
     const animation = (currentTime: number) => {
       if (start === null) start = currentTime;
       const timeElapsed = currentTime - start;
       const progress = Math.min(timeElapsed / duration, 1);
-      
+
       // Easing function for smooth animation
       const easeInOutCubic = progress < 0.5
         ? 4 * progress * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-      
+
       window.scrollTo(0, startPosition + distance * easeInOutCubic);
-      
+
       if (timeElapsed < duration) {
         requestAnimationFrame(animation);
       }
     };
-    
+
     requestAnimationFrame(animation);
   };
 
@@ -134,7 +135,7 @@ export default function Home() {
     try {
       // Step 1: Generate commit plan
       setStatusMessage('Generating commit plan...');
-      const planResponse = await fetch('/api/generate-commits', {
+      const planResponse = await apiFetch('/generate-commits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -149,7 +150,8 @@ export default function Home() {
       });
 
       if (!planResponse.ok) {
-        throw new Error('Failed to generate commit plan');
+        const errorData = await planResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to generate commit plan (${planResponse.status})`);
       }
 
       const planData = await planResponse.json();
@@ -157,7 +159,7 @@ export default function Home() {
 
       // Step 2: Execute commits with progress tracking
       setStatusMessage('Starting commit generation...');
-      const executeResponse = await fetch('/api/execute-commits', {
+      const executeResponse = await apiFetch('/execute-commits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -184,7 +186,7 @@ export default function Home() {
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               const data = JSON.parse(line.slice(6));
-              
+
               if (data.message) {
                 setStatusMessage(data.message);
               }
@@ -226,11 +228,11 @@ export default function Home() {
     }
   };
 
-  const calculatedTotalCommits = grid.length > 0 
+  const calculatedTotalCommits = grid.length > 0
     ? grid.reduce<number>(
-        (total, row) => total + row.reduce<number>((sum, cell) => sum + cell, 0),
-        0
-      )
+      (total, row) => total + row.reduce<number>((sum, cell) => sum + cell, 0),
+      0
+    )
     : 0;
 
   return (
@@ -240,7 +242,7 @@ export default function Home() {
         {/* Floating circles */}
         <div className="absolute top-12 left-[12%] w-96 h-96 bg-primary/5 rounded-full blur-3xl ambient-motion ambient-pulse-slow"></div>
         <div className="absolute top-1/2 right-[12%] w-[520px] h-[520px] bg-blue-500/5 rounded-full blur-3xl ambient-motion ambient-pulse-slower" />
-        
+
         {/* Grid pattern - Main background grid */}
         <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.03]" style={{
           backgroundImage: `
@@ -249,12 +251,12 @@ export default function Home() {
           `,
           backgroundSize: '40px 40px'
         }}></div>
-        
+
         {/* Floating squares */}
         <div className="absolute top-24 right-[40%] w-16 h-16 border-2 border-primary/20 rotate-45 ambient-motion ambient-float"></div>
         <div className="absolute top-[58%] left-[18%] w-24 h-24 border-2 border-blue-500/20 rotate-12 ambient-motion ambient-float-alt"></div>
         <div className="absolute top-[68%] right-[18%] w-12 h-12 border-2 border-purple-500/20 -rotate-45 ambient-motion ambient-drift"></div>
-        
+
         {/* Dots pattern */}
         <div className="absolute top-[42%] left-1/3 flex gap-3">
           <div className="w-2 h-2 bg-primary/30 rounded-full ambient-motion ambient-bob"></div>
@@ -266,7 +268,7 @@ export default function Home() {
         <div className="absolute top-[46%] right-[36%] w-3 h-3 bg-primary/20 ambient-motion ambient-pulse-soft" style={{ animationDelay: '0.2s' }}></div>
         <div className="absolute top-[62%] left-[42%] w-4 h-4 bg-blue-500/20 rounded-sm ambient-motion ambient-pulse-soft" style={{ animationDelay: '0.4s' }}></div>
         <div className="absolute top-[78%] right-[28%] w-3 h-3 bg-purple-500/20 ambient-motion ambient-pulse-soft" style={{ animationDelay: '0.6s' }}></div>
-        
+
         {/* More decorative elements */}
         <div className="absolute top-[70%] left-[30%] w-20 h-20 border border-primary/15 rounded-lg rotate-6 ambient-motion ambient-spin"></div>
         <div className="absolute top-[34%] right-[32%] w-8 h-8 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-full ambient-motion ambient-pulse-soft"></div>
@@ -274,14 +276,14 @@ export default function Home() {
 
       <SEOHead />
       <Header />
-      
+
       <main>
         <AnimatedHero onGetStarted={handleGetStarted} onTemplateScroll={handleTemplateScroll} />
 
         <div className="container mx-auto px-4 py-16 space-y-16">
           {/* Templates moved to top for better discoverability */}
           <section id="templates">
-            <TemplateGallery 
+            <TemplateGallery
               onTemplateSelect={handleTemplateSelect}
               onCustomUpload={handleCustomUpload}
             />
@@ -296,19 +298,19 @@ export default function Home() {
             </div>
 
             {/* AI Text-to-Pattern Generator */}
-            <TextToPattern 
+            <TextToPattern
               onPatternGenerated={(pattern) => {
                 const normalized = normalizeGridToWeeks(pattern);
                 setGrid(normalized);
                 smoothScrollTo(canvasRef.current);
-              }} 
+              }}
               gridWidth={weeksCount}
             />
 
             {/* Canvas + GitHub Panel Side by Side */}
-            <AsciiCanvas 
-              onGridChange={setGrid} 
-              externalGrid={grid} 
+            <AsciiCanvas
+              onGridChange={setGrid}
+              externalGrid={grid}
               year={selectedYear}
               onGenerate={handleGenerate}
               onYearChange={setSelectedYear}
@@ -320,7 +322,7 @@ export default function Home() {
 
           {/* Saved Patterns Section */}
           <section className="space-y-6">
-            <SavedPatterns 
+            <SavedPatterns
               onLoadPattern={(loadedGrid, year) => {
                 const normalized = normalizeGridToWeeks(loadedGrid);
                 setGrid(normalized);
