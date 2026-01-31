@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 
 type CellIntensity = 0 | 1 | 2 | 3 | 4;
 
@@ -15,8 +15,35 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const rawGrid = grid && grid.length > 0 
-    ? grid 
+  // GitHub Theme Colors
+  const THEMES = {
+    light: [
+      '#ebedf0', // 0
+      '#9be9a8', // 1
+      '#40c463', // 2
+      '#30a14e', // 3
+      '#216e39', // 4
+    ],
+    dark: [
+      '#161b22', // 0
+      '#0e4429', // 1
+      '#006d32', // 2
+      '#26a641', // 3
+      '#39d353', // 4
+    ],
+    dimmed: [
+      '#22272e', // 0
+      '#444c56', // 1
+      '#539bf5', // 2
+      '#539bf5', // 3 (GitHub usually uses same or very similar)
+      '#539bf5', // 4
+    ]
+  };
+
+  const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
+
+  const rawGrid = grid && grid.length > 0
+    ? grid
     : Array(DAYS_PER_WEEK).fill(null).map(() => Array(WEEKS).fill(0 as CellIntensity));
 
   const displayGrid = rawGrid;
@@ -50,14 +77,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
 
   // GitHub-style colors: light gray -> green gradient
   const getCellColor = (value: CellIntensity) => {
-    const colors = [
-      'bg-slate-200 dark:bg-slate-700', // No commits
-      'bg-green-200 dark:bg-green-900', // 1 commit
-      'bg-green-400 dark:bg-green-800', // 2 commits
-      'bg-green-500 dark:bg-green-700', // 3 commits
-      'bg-green-600 dark:bg-green-600', // 4+ commits
-    ];
-    return colors[value];
+    return THEMES[previewTheme][value];
   };
 
   const totalCommits = rawGrid.reduce<number>(
@@ -68,19 +88,46 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
   return (
     <Card className={cn('p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800', className)}>
       <div className="space-y-4">
-        <div>
-          <h3 className="font-semibold text-base mb-1">2025 Contribution Graph</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            This is how your graph will look!
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-base mb-1">Preview</h3>
+            <p className="text-xs text-muted-foreground">
+              See how it looks on GitHub
+            </p>
+          </div>
+          <div className="flex bg-muted p-1 rounded-lg">
+            <button
+              onClick={() => setPreviewTheme('light')}
+              className={cn(
+                "px-3 py-1 text-xs rounded-md transition-all",
+                previewTheme === 'light' ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Light
+            </button>
+            <button
+              onClick={() => setPreviewTheme('dark')}
+              className={cn(
+                "px-3 py-1 text-xs rounded-md transition-all",
+                previewTheme === 'dark' ? "bg-slate-800 shadow-sm text-white" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Dark
+            </button>
+          </div>
         </div>
 
-        <div className="overflow-x-auto flex justify-center">
+        <div
+          className={cn(
+            "overflow-x-auto flex justify-center p-4 rounded-lg border transition-colors duration-300",
+            previewTheme === 'dark' ? "bg-[#0d1117] border-[#30363d]" : "bg-white border-[#d0d7de]"
+          )}
+        >
           <div>
             {/* Month Labels - align with grid */}
             <div className="flex gap-0 mb-2">
               {/* Spacer for day labels column */}
-              <div className="w-12 flex-shrink-0" />
+              <div className="w-8 flex-shrink-0" /> {/* Reduced width to align better */}
               {/* Month labels - no wrapper, render directly */}
               <div className="flex gap-1">
                 {/* Initial spacing to align Jan */}
@@ -122,11 +169,9 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
                     {Array.from({ length: DAYS_PER_WEEK }).map((_, dayIndex) => (
                       <div
                         key={`${dayIndex}-${weekIndex}`}
-                        className={cn(
-                          'w-5 h-5 rounded transition-all duration-200 hover:ring-1 ring-slate-400 dark:ring-slate-500 cursor-default',
-                          getCellColor(displayGrid[dayIndex][weekIndex])
-                        )}
-                        title={`${displayGrid[dayIndex][weekIndex]} commits`}
+                        className="w-[10px] h-[10px] rounded-[2px] cursor-default transition-colors duration-200"
+                        style={{ backgroundColor: getCellColor(displayGrid[dayIndex][weekIndex]) }}
+                        title={`${displayGrid[dayIndex][weekIndex]} commits on ${monthBoundaries.find(b => weekIndex >= b.week && weekIndex < b.endWeek)?.month} (Week ${weekIndex + 1})`}
                         data-testid={`preview-cell-${dayIndex}-${weekIndex}`}
                       />
                     ))}
@@ -145,7 +190,8 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
               {[0, 1, 2, 3, 4].map((level) => (
                 <div
                   key={level}
-                  className={cn('w-3 h-3 rounded-sm', getCellColor(level as CellIntensity))}
+                  className="w-[10px] h-[10px] rounded-[2px]"
+                  style={{ backgroundColor: getCellColor(level as CellIntensity) }}
                   title={`${level} commits`}
                 />
               ))}
@@ -156,7 +202,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
             <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCommits}</span> contributions
           </div>
         </div>
-        
+
         <div className="text-xs text-slate-500 dark:text-slate-500 text-center border-t border-slate-200 dark:border-slate-700 pt-2">
           Preview is for visual reference only. Actual commit dates may differ.
         </div>
