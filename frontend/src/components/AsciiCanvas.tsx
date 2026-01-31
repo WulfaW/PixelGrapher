@@ -377,8 +377,8 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
 
   return (
     <Card className="p-6">
-      <div className="grid lg:grid-cols-4 gap-4 items-center">
-        <div className="lg:col-span-3 space-y-6 flex flex-col justify-center">
+      <div className="flex flex-col gap-8">
+        <div className="space-y-6 flex flex-col justify-center w-full">
           <h2 className="text-2xl font-bold">Contribution Canvas</h2>
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex gap-2">
@@ -562,8 +562,8 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
           </div>
         </div>
 
-        {/* GitHub Panel on the right */}
-        <div>
+        {/* GitHub Panel below */}
+        <div className="w-full">
           <GitHubPanel
             onGenerate={onGenerate}
             grid={grid}
