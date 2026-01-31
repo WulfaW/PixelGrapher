@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Github, Check, AlertCircle, ChevronsUpDown, Search, Loader2 } from 'lucide-react';
+import { Github, Check, AlertCircle, ChevronsUpDown, Search, Loader2, RefreshCcw, Lock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { apiFetch, getApiBaseUrl } from '@/lib/api';
@@ -37,6 +37,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const [searchQuery, setSearchQuery] = useState('');
   const [checkingRepo, setCheckingRepo] = useState(false);
   const [loadingRepos, setLoadingRepos] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [joinYear, setJoinYear] = useState<number | null>(null);
   const { toast } = useToast();
 
@@ -212,6 +213,40 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       });
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  const handleResetRepo = async () => {
+    if (!selectedRepo) return;
+
+    if (!window.confirm(`Are you sure you want to RESET "${selectedRepo}"? \n\nTHIS WILL DELETE ALL HISTORY AND COMMITS IN THIS REPOSITORY.\n\nType 'DELETE' to confirm.`)) {
+      return;
+    }
+
+    setResetting(true);
+    try {
+      const response = await apiFetch('/reset-repo', {
+        method: 'POST',
+        body: JSON.stringify({ repository: selectedRepo })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to reset repository');
+      }
+
+      toast({
+        title: "Repository Reset Successful",
+        description: "The repository has been wiped clean.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Reset Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -400,6 +435,40 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
               >
                 {checkingRepo ? 'Checking repository...' : 'Generate Commits'}
               </Button>
+
+              {/* Warnings and Additional Actions */}
+              <div className="space-y-3 pt-4 border-t">
+                {/* Rate Limit Warning */}
+                {totalCommits > 1000 && (
+                  <div className="flex items-start gap-2 text-sm text-amber-600 bg-amber-50 p-2 rounded">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>
+                      High commit count ({totalCommits}). GitHub API limits might be reached. Consider reducing intensity.
+                    </span>
+                  </div>
+                )}
+
+                {/* Reset Action */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground text-center">
+                    Made a mistake? Reset the repository to start over.
+                  </p>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="w-full"
+                    onClick={handleResetRepo}
+                    disabled={!selectedRepo || resetting || checkingRepo}
+                  >
+                    {resetting ? (
+                      <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCcw className="w-3 h-3 mr-2" />
+                    )}
+                    {resetting ? 'Resetting...' : 'Reset Repository History'}
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </div>

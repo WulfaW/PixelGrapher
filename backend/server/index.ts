@@ -11,7 +11,10 @@ app.set("trust proxy", 1);
 
 // CORS configuration - MUST be specific origin for credentials
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app',
+  origin: [
+    process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app',
+    'http://localhost:5173'
+  ],
   credentials: true,
   optionsSuccessStatus: 200,
 }));

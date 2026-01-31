@@ -416,6 +416,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         runningJobs.delete(userKey);
       }
     }
+  }
+  );
+
+  // Reset repository endpoint
+  app.post("/api/reset-repo", async (req, res) => {
+    let gitOps: GitOperations | null = null;
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = req.user as any;
+      const { repository } = req.body;
+
+      if (!repository) {
+        return res.status(400).json({ error: "Repository name required" });
+      }
+
+      // Initialize Git operations
+      gitOps = new GitOperations({
+        repoName: repository.split('/')[1] || repository,
+        username: user.username,
+        email: `${user.username}@users.noreply.github.com`,
+      });
+
+      const token = String(user.accessToken || '');
+      const remoteUrl = `https://${token}@github.com/${repository}.git`;
+
+      await gitOps.resetRepo(remoteUrl);
+
+      res.json({
+        success: true,
+        message: "Repository has been reset successfully. History is wiped."
+      });
+
+    } catch (error: any) {
+      console.error("Error resetting repository:", error);
+      res.status(500).json({ error: error.message });
+    } finally {
+      if (gitOps) {
+        try { gitOps.cleanup(); } catch (e) { console.error(e); }
+      }
+    }
   });
 
   const httpServer = createServer(app);
