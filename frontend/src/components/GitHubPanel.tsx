@@ -408,7 +408,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
               <div className="space-y-2">
                 <Label htmlFor="year">Year</Label>
                 <Select value={year} onValueChange={(v) => { setYear(v); onYearChange?.(v); }}>
-                  <SelectTrigger id="year" data-testid="select-year">
+                  <SelectTrigger id="year" data-testid="select-year" className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
