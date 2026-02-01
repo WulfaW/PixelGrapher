@@ -93,7 +93,7 @@ export default function TextToPattern({
             <div className="space-y-4">
               {!imgError ? (
                 <img
-                  src="/ai-commit-artist-demo.gif"
+                  src="/ai-commit-artist-demo.png"
                   alt="AI Commit Artist demo"
                   className="w-full rounded border"
                   onError={() => setImgError(true)}
@@ -115,7 +115,7 @@ export default function TextToPattern({
       </div>
 
       <div className="space-y-4 mt-4">
-        <div className="grid gap-4 md:grid-cols-[1fr,auto,auto]">
+        <div className="grid gap-4 md:grid-cols-[1fr,auto,auto] items-start">
           <div className="space-y-2">
             <Label htmlFor="text-input">Your Text</Label>
             <Input
