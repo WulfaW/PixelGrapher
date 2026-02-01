@@ -16,8 +16,8 @@ interface TextToPatternProps {
   gridWidth?: number;
 }
 
-export default function TextToPattern({ 
-  onPatternGenerated, 
+export default function TextToPattern({
+  onPatternGenerated,
   gridWidth = 52
 }: TextToPatternProps) {
   const [text, setText] = useState('');
@@ -153,12 +153,13 @@ export default function TextToPattern({
             </p>
           </div>
 
-          <div className="flex items-end">
+          <div className="space-y-2">
+            <Label className="opacity-0">Action</Label>
             <Button
               onClick={handleGenerate}
               disabled={!text.trim() || isGenerating}
-              size="lg"
-              className="w-full md:w-auto"
+              size="default"
+              className="w-full md:w-auto h-10"
               data-testid="button-generate-ai-pattern"
             >
               {isGenerating ? (
