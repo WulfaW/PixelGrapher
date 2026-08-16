@@ -21,7 +21,7 @@ export default function TextToPattern({
   gridWidth = 52
 }: TextToPatternProps) {
   const [text, setText] = useState('');
-  const [style, setStyle] = useState<'realistic' | 'clean' | 'heavy'>('realistic');
+  const [style, setStyle] = useState<'pristine' | 'clean' | 'realistic' | 'heavy'>('pristine');
   const [isGenerating, setIsGenerating] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -38,10 +38,11 @@ export default function TextToPattern({
         cols: gridWidth,
         rows: 7,
         baseIntensity: 4,
-        backgroundNoise: style === 'clean' ? 0.05 : style === 'realistic' ? 0.2 : 0.35,
+        backgroundNoise: style === 'pristine' ? 0 : style === 'clean' ? 0.05 : style === 'realistic' ? 0.2 : 0.35,
         noiseIntensity: style === 'heavy' ? 2 : 1,
         textAlignment: 'center',
         verticalAlign: 'middle',
+        degradeText: style !== 'pristine',
       });
 
       onPatternGenerated?.(pattern);
@@ -141,12 +142,14 @@ export default function TextToPattern({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="pristine">Pristine</SelectItem>
                 <SelectItem value="clean">Clean</SelectItem>
                 <SelectItem value="realistic">Realistic</SelectItem>
                 <SelectItem value="heavy">Heavy</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
+              {style === 'pristine' && 'Solid text, no noise'}
               {style === 'clean' && 'Minimal noise'}
               {style === 'realistic' && 'Natural look'}
               {style === 'heavy' && 'Lots of commits'}

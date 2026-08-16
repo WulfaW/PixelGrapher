@@ -94,6 +94,7 @@ interface TextToPatternOptions {
   textAlignment?: 'left' | 'center' | 'right';
   verticalAlign?: 'top' | 'middle' | 'bottom';
   noiseIntensity?: number;
+  degradeText?: boolean;
 }
 
 /**
@@ -174,14 +175,16 @@ export function generateTextPattern(options: TextToPatternOptions): CellIntensit
     }
   }
 
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (grid[row][col] > 0) {
-        if (Math.random() < 0.1) {
-          grid[row][col] = Math.max(1, grid[row][col] - 1) as CellIntensity;
-        }
-        if (Math.random() < 0.05) {
-          grid[row][col] = Math.min(4, grid[row][col] + 1) as CellIntensity;
+  if (options.degradeText !== false) {
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        if (grid[row][col] > 0) {
+          if (Math.random() < 0.1) {
+            grid[row][col] = Math.max(1, grid[row][col] - 1) as CellIntensity;
+          }
+          if (Math.random() < 0.05) {
+            grid[row][col] = Math.min(4, grid[row][col] + 1) as CellIntensity;
+          }
         }
       }
     }
