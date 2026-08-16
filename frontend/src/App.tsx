@@ -7,6 +7,8 @@ import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import CrashTest from "@/components/CrashTest";
 
+import { Analytics } from '@vercel/analytics/react';
+
 function Router() {
   return (
     <Switch>
@@ -23,6 +25,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
+        <Analytics />
       </TooltipProvider>
     </QueryClientProvider>
   );

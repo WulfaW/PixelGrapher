@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save, Image } from 'lucide-react';
+import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save, Image, Smartphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { usePatternStorage } from '@/hooks/use-pattern-storage';
@@ -379,7 +379,16 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
     <Card className="p-6">
       <div className="flex flex-col gap-8">
         <div className="space-y-6 flex flex-col justify-center w-full">
-          <h2 className="text-2xl font-bold">Contribution Canvas</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-2xl font-bold">Contribution Canvas</h2>
+            
+            {/* Mobile Warning */}
+            <div className="sm:hidden flex items-center gap-2 text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400 p-2 rounded text-xs">
+              <Smartphone className="w-4 h-4 shrink-0" />
+              <span>For the best drawing experience, please use a desktop device.</span>
+            </div>
+          </div>
+          
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex gap-2">
               <Button
