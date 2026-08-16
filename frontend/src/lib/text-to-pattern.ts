@@ -112,7 +112,15 @@ export function generateTextPattern(options: TextToPatternOptions): CellIntensit
   } = options;
 
   const grid: CellIntensity[][] = Array(rows).fill(null).map(() => Array(cols).fill(0 as CellIntensity));
-  const cleanText = text.toUpperCase().split('').filter((c) => FONT_3X5[c]).join('');
+  
+  // Normalize Turkish characters to English equivalents
+  const trMap: Record<string, string> = {
+    'ç': 'c', 'Ç': 'C', 'ğ': 'g', 'Ğ': 'G', 'ı': 'i', 'İ': 'I',
+    'ö': 'o', 'Ö': 'O', 'ş': 's', 'Ş': 'S', 'ü': 'u', 'Ü': 'U'
+  };
+  const normalizedText = text.replace(/[çÇğĞıİöÖşŞüÜ]/g, (match) => trMap[match] || match);
+  
+  const cleanText = normalizedText.toUpperCase().split('').filter((c) => FONT_3X5[c]).join('');
   
   if (cleanText.length === 0) return grid;
 
