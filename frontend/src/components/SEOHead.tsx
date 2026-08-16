@@ -11,7 +11,7 @@ export default function SEOHead({
   title = 'PixelGrapher - GitHub Contribution Graph Art Generator',
   description = 'Transform your creative ideas into stunning GitHub contribution patterns. Draw ASCII art, use AI text-to-pattern, or choose from templates to paint your GitHub profile.',
   image = '/og-image.png',
-  url = 'https://pixelgrapher.com'
+  url = 'https://pixel-grapher.vercel.app/'
 }: SEOHeadProps) {
   useEffect(() => {
     // Update document title

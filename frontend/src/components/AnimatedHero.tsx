@@ -32,8 +32,8 @@ const PIXEL_PATTERNS = [
   ],
 ];
 
-// GitHub-style intensity colours (dark mode friendly)
-const INTENSITY_COLORS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+// Tailwind intensity classes for perfect theme matching (Light/Dark mode)
+const INTENSITY_CLASSES = ['bg-muted', 'bg-primary/30', 'bg-primary/50', 'bg-primary/75', 'bg-primary'];
 
 export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGetStarted?: () => void; onTemplateScroll?: () => void }) {
   const [currentPattern, setCurrentPattern] = useState(0);
@@ -50,11 +50,11 @@ export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGet
   const pattern = PIXEL_PATTERNS[currentPattern];
 
   return (
-    <div className="relative min-h-[60vh] flex items-center justify-center">
+    <div className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Static hero glow — radial green, 5% opacity, no animation */}
       <div
         className="absolute inset-x-0 top-0 h-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, hsl(142 76% 36% / 0.05), transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }}
       />
       <div
         className={`relative z-10 max-w-5xl mx-auto px-4 text-center transition-all duration-700 ${
@@ -64,15 +64,14 @@ export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGet
         {/* Pixel art mini-preview */}
         <div className="flex justify-center mb-10">
           <div
-            className="grid gap-[3px] p-3 rounded-xl border border-white/[0.06] bg-[#0d1117]"
+            className="grid gap-[3px] p-3 rounded-xl border bg-card shadow-sm"
             style={{ gridTemplateColumns: `repeat(${pattern[0].length}, 1fr)` }}
           >
             {pattern.map((row, r) =>
               row.map((cell, c) => (
                 <div
                   key={`${currentPattern}-${r}-${c}`}
-                  className="w-4 h-4 rounded-sm transition-colors duration-500"
-                  style={{ backgroundColor: INTENSITY_COLORS[cell ? 4 : 0] }}
+                  className={`w-4 h-4 rounded-sm transition-colors duration-500 ${INTENSITY_CLASSES[cell ? 4 : 0]}`}
                 />
               ))
             )}
