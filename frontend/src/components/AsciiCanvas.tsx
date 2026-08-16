@@ -1,13 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save, Image, Smartphone } from 'lucide-react';
+import { Pencil, Eraser, Trash2, Droplet, Undo2, Redo2, Download, Upload, Save, Image, Smartphone, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { usePatternStorage } from '@/hooks/use-pattern-storage';
 import { dateForCell, getCalendarRange } from '../shared/calendar';
 import GitHubPanel from './GitHubPanel';
 import html2canvas from 'html2canvas';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const DAYS_PER_WEEK = 7;
 
@@ -390,20 +397,17 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
           </div>
           
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex gap-2">
+            {/* Drawing Tools */}
+            <div className="flex gap-1.5">
               <Button
                 size="sm"
                 variant={tool === 'draw' ? 'default' : 'outline'}
                 onClick={() => setTool('draw')}
                 data-testid="button-draw-tool"
                 title="Draw (D)"
-                className="group relative"
               >
                 <Pencil className="w-4 h-4 mr-2" />
                 Draw
-                <span className="absolute -bottom-8 left-0 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                  Press D
-                </span>
               </Button>
               <Button
                 size="sm"
@@ -411,97 +415,79 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
                 onClick={() => setTool('erase')}
                 data-testid="button-erase-tool"
                 title="Erase (R)"
-                className="group relative"
               >
                 <Eraser className="w-4 h-4 mr-2" />
                 Erase
-                <span className="absolute -bottom-8 left-0 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                  Press R
-                </span>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleClear}
-                data-testid="button-clear-canvas"
-                title="Clear (C)"
-                className="group relative"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear
-                <span className="absolute -bottom-8 left-0 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                  Press C
-                </span>
               </Button>
             </div>
 
-            <div className="flex gap-2">
+            <div className="w-px h-6 bg-border mx-1" />
+
+            {/* History & Clear */}
+            <div className="flex gap-1.5">
               <Button
-                size="sm"
+                size="icon"
+                className="h-9 w-9"
                 variant="outline"
                 onClick={handleUndo}
                 disabled={historyIndex <= 0}
-                data-testid="button-undo"
                 title="Undo (Ctrl+Z)"
               >
-                <Undo2 className="w-4 h-4 mr-2" />
-                Undo
+                <Undo2 className="w-4 h-4" />
               </Button>
               <Button
-                size="sm"
+                size="icon"
+                className="h-9 w-9"
                 variant="outline"
                 onClick={handleRedo}
                 disabled={historyIndex >= history.length - 1}
-                data-testid="button-redo"
                 title="Redo (Ctrl+Y)"
               >
-                <Redo2 className="w-4 h-4 mr-2" />
-                Redo
+                <Redo2 className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                className="h-9 w-9"
+                variant="outline"
+                onClick={handleClear}
+                title="Clear (C)"
+              >
+                <Trash2 className="w-4 h-4 text-destructive" />
               </Button>
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleExport}
-                data-testid="button-export"
-                title="Export Pattern"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleImport}
-                data-testid="button-import"
-                title="Import Pattern"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Import
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleQuickSave}
-                data-testid="button-quick-save"
-                title="Quick Save (Ctrl+S)"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleExportImage}
-                data-testid="button-export-image"
-                title="Export as Image (PNG)"
-              >
-                <Image className="w-4 h-4 mr-2" />
-                Export PNG
-              </Button>
-            </div>
+            <div className="w-px h-6 bg-border mx-1" />
+
+            {/* File Actions Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className="gap-2">
+                  <Save className="w-4 h-4" />
+                  File
+                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={handleQuickSave} className="cursor-pointer">
+                  <Save className="w-4 h-4 mr-2" />
+                  Save to Browser
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleImport} className="cursor-pointer">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExport} className="cursor-pointer">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export JSON
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleExportImage} className="cursor-pointer">
+                  <Image className="w-4 h-4 mr-2" />
+                  Export as PNG
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <div className="flex items-center gap-2">
               <Droplet className="w-4 h-4 text-muted-foreground" />
