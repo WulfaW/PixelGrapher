@@ -164,7 +164,7 @@ export default function Home() {
           <section id="templates">
             <TemplateGallery onTemplateSelect={handleTemplateSelect} onCustomUpload={handleCustomUpload} />
           </section>
-          <section ref={canvasRef} id="how-it-works" className="space-y-6">
+          <section ref={canvasRef} id="canvas-section" className="space-y-6">
             <div className="text-center max-w-3xl mx-auto mb-8">
               <h2 className="text-4xl font-bold mb-4">Create Your Art</h2>
               <p className="text-lg text-muted-foreground">Draw your own pattern, use AI to generate text, or start with a template.</p>

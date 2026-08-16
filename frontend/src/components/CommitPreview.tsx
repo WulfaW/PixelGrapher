@@ -96,8 +96,8 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-base mb-1">Preview</h3>
-            <p className="text-xs text-muted-foreground">
+            <h3 className={cn("font-semibold text-base mb-1", previewTheme === 'dark' ? "text-slate-100" : "text-slate-900")}>Preview</h3>
+            <p className={cn("text-xs", previewTheme === 'dark' ? "text-slate-400" : "text-slate-500")}>
               See how it looks on GitHub
             </p>
           </div>
@@ -144,7 +144,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
                     <div
                       key={`month-label-${idx}`}
                       style={{ flexBasis }}
-                      className="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-left overflow-hidden uppercase tracking-tighter"
+                      className={cn("text-[10px] font-medium text-left overflow-hidden uppercase tracking-tighter", previewTheme === 'dark' ? "text-slate-400" : "text-slate-600")}
                     >
                       {boundary.month.slice(0, 3)}
                     </div>
@@ -160,7 +160,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
                 {DAYS.map((day, idx) => (
                   <div
                     key={`day-${idx}`}
-                    className="text-[10px] font-medium text-slate-600 dark:text-slate-400 h-[10px] flex items-center justify-end pr-1"
+                    className={cn("text-[10px] font-medium h-[10px] flex items-center justify-end pr-1", previewTheme === 'dark' ? "text-slate-400" : "text-slate-600")}
                   >
                     {idx % 2 === 0 ? day.slice(0, 1) : ''}
                   </div>
@@ -190,7 +190,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
         {/* Legend */}
         <div className="flex items-center justify-between pt-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-600 dark:text-slate-400">Less</span>
+            <span className={cn("text-xs", previewTheme === 'dark' ? "text-slate-400" : "text-slate-600")}>Less</span>
             <div className="flex gap-1">
               {[0, 1, 2, 3, 4].map((level) => (
                 <div
@@ -201,14 +201,14 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
                 />
               ))}
             </div>
-            <span className="text-xs text-slate-600 dark:text-slate-400">More</span>
+            <span className={cn("text-xs", previewTheme === 'dark' ? "text-slate-400" : "text-slate-600")}>More</span>
           </div>
-          <div className="text-xs text-slate-600 dark:text-slate-400">
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCommits}</span> contributions
+          <div className={cn("text-xs", previewTheme === 'dark' ? "text-slate-400" : "text-slate-600")}>
+            <span className={cn("font-semibold", previewTheme === 'dark' ? "text-slate-100" : "text-slate-900")}>{totalCommits}</span> contributions
           </div>
         </div>
 
-        <div className="text-xs text-slate-500 dark:text-slate-500 text-center border-t border-slate-200 dark:border-slate-700 pt-2">
+        <div className={cn("text-xs text-center border-t pt-2", previewTheme === 'dark' ? "text-slate-500 border-slate-700" : "text-slate-500 border-slate-200")}>
           Preview is for visual reference only. Actual commit dates may differ.
         </div>
       </div>
