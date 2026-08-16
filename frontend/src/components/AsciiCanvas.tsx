@@ -72,9 +72,25 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
   // Update grid when external grid changes
   useEffect(() => {
     if (externalGrid && externalGrid.length === DAYS_PER_WEEK) {
-      const normalized = normalizeToWeeks(externalGrid as CellIntensity[][]);
-      setGrid(normalized);
-      onGridChange?.(normalized);
+      // Prevent infinite loop by deep checking if the grid actually changed
+      if (JSON.stringify(externalGrid) !== JSON.stringify(grid)) {
+        const normalized = normalizeToWeeks(externalGrid as CellIntensity[][]);
+        setGrid(normalized);
+        
+        // Only notify parent if our normalization actually changed the grid
+        // (usually the parent already normalized it, so this avoids a loop)
+        if (JSON.stringify(normalized) !== JSON.stringify(externalGrid)) {
+          onGridChange?.(normalized);
+        }
+        
+        // Add to history so user can undo external loads
+        setHistory((prev) => {
+          const newHistory = prev.slice(0, historyIndex + 1);
+          newHistory.push(normalized);
+          return newHistory;
+        });
+        setHistoryIndex((prev) => prev + 1);
+      }
     }
   }, [externalGrid, weeksCount]);
 
