@@ -191,12 +191,12 @@ export default function Header() {
             size="sm"
             asChild
             data-testid="button-github-repo"
-            className="group relative overflow-hidden transition-all hover:shadow-md hover:scale-105"
+            className="group transition-colors"
           >
             <a href="https://github.com/WulfaW/PixelGrapher" target="_blank" rel="noopener noreferrer" className="flex items-center">
-              <Star className="w-4 h-4 mr-2 transition-all group-hover:fill-yellow-400 group-hover:text-yellow-400 group-hover:rotate-12" />
+              <Star className="w-4 h-4 mr-2 group-hover:fill-current transition-colors" />
               <span className="hidden sm:inline font-medium">Star on GitHub</span>
-              <Github className="w-4 h-4 sm:ml-2 transition-transform group-hover:rotate-12" />
+              <Github className="w-4 h-4 sm:ml-2" />
             </a>
           </Button>
         </nav>
