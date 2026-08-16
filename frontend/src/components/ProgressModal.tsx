@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Loader2, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Loader2, ExternalLink, Timer } from 'lucide-react';
 
 interface ProgressModalProps {
   open: boolean;
@@ -72,8 +72,9 @@ export default function ProgressModal({
                     {statusMessage || 'Creating commits with backdated timestamps...'}
                   </p>
                 </div>
-                <div className="text-xs text-muted-foreground/70">
-                  ⏱️ Estimated time: {Math.ceil((totalCommits - currentCommit) * 0.1)}s remaining
+                <div className="text-xs text-muted-foreground/70 flex items-center">
+                  <Timer className="w-3.5 h-3.5 mr-1" />
+                  Estimated time: {Math.ceil((totalCommits - currentCommit) * 0.1)}s remaining
                 </div>
               </div>
 
