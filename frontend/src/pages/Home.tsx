@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import Header from '@/components/Header';
 import SEOHead from '@/components/SEOHead';
 import AnimatedHero from '@/components/AnimatedHero';
+import HowItWorks from '@/components/HowItWorks';
 import AsciiCanvas from '@/components/AsciiCanvas';
 import TemplateGallery from '@/components/TemplateGallery';
 import UploadCustomDialog from '@/components/UploadCustomDialog';
@@ -158,7 +159,8 @@ export default function Home() {
       <Header />
       <main>
         <AnimatedHero onGetStarted={handleGetStarted} onTemplateScroll={handleTemplateScroll} />
-        <div className="container mx-auto px-4 py-16 space-y-16">
+        <HowItWorks />
+        <div className="container mx-auto px-4 py-8 space-y-16">
           <section id="templates">
             <TemplateGallery onTemplateSelect={handleTemplateSelect} onCustomUpload={handleCustomUpload} />
           </section>
