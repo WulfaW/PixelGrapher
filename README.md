@@ -1,123 +1,104 @@
 <div align="center">
-  <pre>
-  &lt;ASCII/&gt;
-  </pre>
-  <h1>PixelGrapher 🎨</h1>
-  <p><strong>Transform your GitHub contribution graph into a canvas for your creativity.</strong></p>
+  <h1>PixelGrapher</h1>
+  <p><em>Paint your GitHub contribution graph like a digital canvas.</em></p>
 
-  [![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=pixel-grapher)](https://pixel-grapher.vercel.app/)
-  [![GitHub](https://img.shields.io/github/stars/WulfaW/PixelGrapher?style=social)](https://github.com/WulfaW/PixelGrapher)
   [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+  [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+  [![Vite](https://img.shields.io/badge/Vite-5-purple.svg)](https://vitejs.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
+  
+  [**Live Demo**](https://pixel-grapher.vercel.app/) • [**Report Bug**](https://github.com/WulfaW/PixelGrapher/issues)
 </div>
 
 <br />
 
-PixelGrapher is a sleek, single-player SaaS tool that allows you to draw pixel art, write text, or use templates directly on a 52x7 grid matching the GitHub contribution calendar. Once your masterpiece is ready, PixelGrapher safely generates backdated commits and pushes them to a repository of your choice, instantly painting your GitHub profile.
+> **Note to Maintainer:** Place a high-quality screenshot of the PixelGrapher UI in the `docs/` folder named `hero.png` to make this README pop!
+> 
+> `![PixelGrapher Hero UI](./docs/hero.png)`
 
 ## ✨ Features
 
-- 🎨 **Contribution Canvas:** A responsive 52x7 grid with drawing, erasing, undo/redo, and intensity controls.
-- 🤖 **AI Text-to-Pattern:** Type any text (up to 13 characters) and generate a perfect pixel-art pattern automatically.
-- 📁 **Save & Restore:** Save your drafts directly to your browser's local storage or export/import them as JSON files.
-- 🔐 **Secure OAuth:** Login securely with your GitHub account. We only request the minimum permissions needed to push to your selected repository.
-- 🖼️ **Image Export:** Export your pattern as a clean, high-resolution PNG.
-- 🌗 **Premium UI/UX:** A stunning, meticulously designed interface with full Dark & Light mode support, built on shadcn/ui.
+PixelGrapher is a premium SaaS-like tool that allows you to transform your standard GitHub contribution calendar into personalized art.
 
-## 🛠️ Tech Stack
-
-- **Frontend:** React, Vite, Tailwind CSS, shadcn/ui, Lucide Icons.
-- **Backend:** Node.js, Express.js, `isomorphic-git` (for creating local commits without a Git CLI dependency).
-- **Deployment:** Vercel (Frontend), Render (Backend).
-- **Automation:** GitHub Actions (Keep-alive cron job for the Render free-tier).
-
----
+* **🎨 52x7 Contribution Canvas**: A fully interactive drawing board matching GitHub's exact contribution graph dimensions.
+* **🤖 Text-to-Pattern Engine**: Simply type a word and our engine instantly converts it into perfectly aligned pixel art.
+* **📚 Quick Templates**: Jumpstart your creativity with pre-made templates like Space Invader, Heart, Checkmark, and more.
+* **🔒 Privacy-First Auth**: Secure GitHub OAuth integration. Tokens are stored locally in your browser and never persisted in our database.
+* **💾 Local Auto-Save**: Your work is automatically saved to your browser so you never lose your progress.
+* **📦 Export & Import**: Save your masterpieces as `.json` files for backup or share them as `.png` images.
+* **🌓 Beautiful UI**: A highly polished, responsive interface with deep Dark Mode and premium Light Mode support.
 
 ## 🚀 How It Works
 
-1. **Design Your Art:** Use the canvas to draw manually, type text to generate a pattern, or pick a quick-start template.
-2. **Connect & Select:** Sign in with GitHub. Create a *new, empty repository* on your GitHub account and select it in PixelGrapher.
-3. **Generate Commits:** Our backend uses `isomorphic-git` to generate thousands of backdated, dummy commits locally, and pushes them straight to your repository. Your GitHub graph updates instantly.
+1. **Design**: Use our canvas tools (Pencil, Eraser, Undo/Redo) to draw your art.
+2. **Connect**: Sign in via GitHub OAuth and select a repository. *(We highly recommend using a fresh, empty repository specifically for this purpose).*
+3. **Generate**: PixelGrapher creates local, backdated commits corresponding to your drawing and securely pushes them to your selected repository. Your GitHub profile updates instantly!
 
----
+## 🏗️ Architecture & Tech Stack
 
-## 💻 Local Development
+PixelGrapher uses a decoupled frontend-backend architecture:
 
-### 1. Prerequisites
-- Node.js 18+
-- A GitHub account
+* **Frontend (Vercel)**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui.
+* **Backend (Render)**: Express.js, Node.js, `isomorphic-git` (for creating bare-metal commits without git binary dependencies).
+* **Auth**: GitHub OAuth 2.0 (Dual `localStorage`/`sessionStorage` fallback for enhanced privacy browser compatibility).
 
-### 2. GitHub OAuth Setup
-Before running the app locally, you need a GitHub OAuth App.
-1. Go to **GitHub Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
-2. **Application name**: `PixelGrapher Local`
-3. **Homepage URL**: `http://localhost:5174`
-4. **Authorization callback URL**: `http://localhost:3000/api/auth/github/callback`
-5. Click **Register application**.
-6. Copy your **Client ID** and generate a **Client Secret**.
+## 💻 Local Setup
 
-### 3. Installation
+### Prerequisites
+* Node.js 18+
+* A GitHub account
 
-Clone the repository:
+### 1. GitHub OAuth App Setup
+To run PixelGrapher locally, you need a GitHub OAuth App:
+1. Go to `GitHub Settings > Developer Settings > OAuth Apps > New OAuth App`.
+2. **Homepage URL**: `http://localhost:5173` (or your frontend port)
+3. **Callback URL**: `http://localhost:3000/api/auth/github/callback`
+4. Copy your `Client ID` and generate a `Client Secret`.
+
+### 2. Backend Setup
 ```bash
 git clone https://github.com/WulfaW/PixelGrapher.git
-cd PixelGrapher
-```
+cd PixelGrapher/backend
 
-#### Backend Setup
-```bash
-cd backend
 npm install
 ```
 Create a `.env` file in the `backend/` directory:
 ```env
-PORT=3000
-FRONTEND_URL=http://localhost:5174
-GITHUB_CLIENT_ID=your_client_id_here
-GITHUB_CLIENT_SECRET=your_client_secret_here
+GITHUB_CLIENT_ID=your_client_id
+GITHUB_CLIENT_SECRET=your_client_secret
 GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
-SESSION_SECRET=your_super_secret_session_key
+FRONTEND_URL=http://localhost:5173
+SESSION_SECRET=generate_a_random_string
+```
+Start the backend server:
+```bash
+npm run dev
 ```
 
-#### Frontend Setup
+### 3. Frontend Setup
+Open a new terminal:
 ```bash
-cd ../frontend
+cd PixelGrapher/frontend
 npm install
-```
-Create a `.env` file in the `frontend/` directory:
-```env
-VITE_API_URL=http://localhost:3000
-```
-
-### 4. Run the App
-
-Open two terminals.
-
-**Terminal 1 (Backend):**
-```bash
-cd backend
 npm run dev
 ```
+Visit `http://localhost:5173` in your browser.
 
-**Terminal 2 (Frontend):**
-```bash
-cd frontend
-npm run dev
-```
+## 🤝 Contributing
 
-Visit `http://localhost:5174` in your browser.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
----
-
-## 🏗️ Architecture Notes
-
-### Why a backend?
-Generating thousands of commits directly in the browser using `isomorphic-git` is possible but highly memory-intensive and can crash mobile browsers or lower-end devices. Offloading the Git tree generation and push process to an Express backend ensures a smooth, non-blocking user experience on the frontend.
-
-### Dual-Storage Auth
-To bypass strict privacy settings in modern browsers (like Zen Browser or Brave) that block 3rd-party cookies/storage during OAuth redirects, PixelGrapher utilizes a dual `localStorage` + `sessionStorage` token mirroring system, ensuring users remain logged in seamlessly.
-
----
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+<div align="center">
+  Made with 💚 and ASCII by WulfaW
+</div>
