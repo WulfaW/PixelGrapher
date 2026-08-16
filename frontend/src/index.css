@@ -192,6 +192,9 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    /* Subtle static dot texture — 4% opacity, never animates */
+    background-image: radial-gradient(circle, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
   
   /* Performance optimization for smooth scrolling */

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 // GitHub contribution graph mini-preview — cycles through pixel patterns
@@ -51,6 +51,11 @@ export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGet
 
   return (
     <div className="relative min-h-[60vh] flex items-center justify-center">
+      {/* Static hero glow — radial green, 5% opacity, no animation */}
+      <div
+        className="absolute inset-x-0 top-0 h-full pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, hsl(142 76% 36% / 0.05), transparent 70%)' }}
+      />
       <div
         className={`relative z-10 max-w-5xl mx-auto px-4 text-center transition-all duration-700 ${
           visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
