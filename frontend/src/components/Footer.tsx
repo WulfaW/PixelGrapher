@@ -131,7 +131,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/yourusername/PixelGrapher/blob/main/LICENSE"
+                  href="https://github.com/WulfaW/PixelGrapher/blob/main/LICENSE"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
