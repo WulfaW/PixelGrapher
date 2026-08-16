@@ -28,10 +28,10 @@ const MiniGridPreview = memo(function MiniGridPreview({ grid }: { grid: number[]
                 className={cn(
                   "w-1.5 h-1.5 rounded-[1px]",
                   cell === 0 && "bg-muted/20",
-                  cell === 1 && "bg-green-900/40",
-                  cell === 2 && "bg-green-700/60",
-                  cell === 3 && "bg-green-500/80",
-                  cell === 4 && "bg-green-400"
+                  cell === 1 && "bg-primary/30",
+                  cell === 2 && "bg-primary/50",
+                  cell === 3 && "bg-primary/75",
+                  cell === 4 && "bg-primary"
                 )}
               />
             ))}

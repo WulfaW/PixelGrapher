@@ -29,10 +29,10 @@ function MiniGrid({ grid }: { grid: number[][] }) {
                 className={cn(
                   'w-2 h-2 rounded-[1px]',
                   cell === 0 && 'bg-muted/20',
-                  cell === 1 && 'bg-green-900/40',
-                  cell === 2 && 'bg-green-700/60',
-                  cell === 3 && 'bg-green-500/80',
-                  cell === 4 && 'bg-green-400'
+                  cell === 1 && 'bg-primary/30',
+                  cell === 2 && 'bg-primary/50',
+                  cell === 3 && 'bg-primary/75',
+                  cell === 4 && 'bg-primary'
                 )}
               />
             ))}
@@ -82,7 +82,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
         setAscii(text);
         setError('');
       } catch (e: any) {
-        setError('Dosya içeriği tanınamadı. JSON veya ASCII olmalı.');
+        setError('Unrecognized file content. Must be JSON or ASCII.');
       }
     }
   };
@@ -94,7 +94,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Upload Custom Pattern</DialogTitle>
-          <DialogDescription>ASCII veya JSON grid yükleyin. 7 satır x 52 sütuna otomatik sığdırılır.</DialogDescription>
+          <DialogDescription>Upload an ASCII or JSON grid. Automatically fits into a 7x52 canvas.</DialogDescription>
         </DialogHeader>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -103,7 +103,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
               <TabsList className="grid grid-cols-3 w-full">
                 <TabsTrigger value="ascii">ASCII</TabsTrigger>
                 <TabsTrigger value="json">JSON</TabsTrigger>
-                <TabsTrigger value="file">Dosya</TabsTrigger>
+                <TabsTrigger value="file">File</TabsTrigger>
               </TabsList>
 
               <TabsContent value="ascii" className="space-y-2">
@@ -114,7 +114,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
                   rows={10}
                 />
                 <div className="text-xs text-muted-foreground">
-                  Karakter eşleme: . boş • #:4 • +:3 • *:2 • -:1
+                  Character mapping: . empty • #:4 • +:3 • *:2 • -:1
                 </div>
               </TabsContent>
 
@@ -125,7 +125,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
                   onChange={(e) => setJsonText(e.target.value)}
                   rows={10}
                 />
-                <div className="text-xs text-muted-foreground">0..4 arası değerler kabul edilir.</div>
+                <div className="text-xs text-muted-foreground">Accepts values from 0 to 4.</div>
               </TabsContent>
 
               <TabsContent value="file" className="space-y-2">
@@ -135,7 +135,7 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
                   accept=".txt,.json"
                   onChange={(e) => handleFileChange(e.target.files?.[0] || undefined)}
                 />
-                <div className="text-xs text-muted-foreground">.txt (ASCII) veya .json (grid) yükleyin</div>
+                <div className="text-xs text-muted-foreground">Upload a .txt (ASCII) or .json (grid) file</div>
               </TabsContent>
             </Tabs>
 
@@ -143,14 +143,14 @@ export default function UploadCustomDialog({ open, onOpenChange, onApply }: Uplo
           </div>
 
           <div className="space-y-3">
-            <div className="text-sm font-medium">Önizleme</div>
+            <div className="text-sm font-medium">Preview</div>
             <MiniGrid grid={grid} />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>İptal</Button>
-          <Button disabled={!canApply} onClick={() => { onApply(grid); onOpenChange(false); }}>Canvas'a Yükle</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button disabled={!canApply} onClick={() => { onApply(grid); onOpenChange(false); }}>Load to Canvas</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
