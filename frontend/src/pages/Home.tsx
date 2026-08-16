@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Header from '@/components/Header';
 import SEOHead from '@/components/SEOHead';
 import AnimatedHero from '@/components/AnimatedHero';
@@ -153,7 +153,7 @@ export default function Home() {
   const calculatedTotalCommits = grid.reduce<number>((t, row) => t + row.reduce<number>((s, c) => s + c, 0), 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-dot-grid">
       <SEOHead />
       <Header />
       <main>
