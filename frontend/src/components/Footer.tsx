@@ -1,4 +1,4 @@
-import { Github, Heart, Code2, Sparkles, Linkedin } from 'lucide-react';
+import { Github, Heart, Code2, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Footer() {

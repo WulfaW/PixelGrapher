@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { HelpCircle, Sparkles, Wand2 } from 'lucide-react';
+import { HelpCircle, Wand2 } from 'lucide-react';
 import { generateTextPattern } from '@/lib/text-to-pattern';
 
 type CellIntensity = 0 | 1 | 2 | 3 | 4;
@@ -56,12 +56,12 @@ export default function TextToPattern({
   };
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-primary/5 to-background border-primary/20">
+    <Card className="p-6">
       {/* Header with help button */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Sparkles className="w-5 h-5 text-primary" />
+          <div className="p-2 rounded-lg bg-muted">
+            <Wand2 className="w-5 h-5 text-muted-foreground" />
           </div>
           <div>
             <h3 className="font-semibold text-lg">AI Commit Artist</h3>
@@ -179,14 +179,8 @@ export default function TextToPattern({
 
         <div className="pt-2 border-t">
           <div className="text-xs text-muted-foreground space-y-1">
-            <p className="flex items-center gap-1">
-              <span className="font-semibold">💡 Pro tip:</span>
-              Compact 3×5 font fits ~13 characters in 52 weeks!
-            </p>
-            <p className="flex items-center gap-1">
-              <span className="font-semibold">🎨 Example:</span>
-              "HELLO WORLD", "CODE 2025", "AI ❤"
-            </p>
+            <p>Compact 3×5 font — fits ~13 characters across 52 weeks.</p>
+            <p>Examples: "HELLO WORLD", "CODE 2025", "PIXEL"</p>
           </div>
         </div>
       </div>

@@ -322,7 +322,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Github className={cn("w-6 h-6 transition-colors", {
-              "text-green-500": status === 'connected',
+              "text-primary": status === 'connected',
               "text-foreground": status !== 'connected'
             })} />
             <div>
@@ -506,9 +506,9 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
                     Made a mistake? Reset the repository to start over.
                   </p>
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     size="sm"
-                    className="w-full"
+                    className="w-full border-destructive/40 text-destructive hover:bg-destructive/5 hover:border-destructive transition-colors"
                     onClick={handleResetRepo}
                     disabled={!selectedRepo || resetting || checkingRepo}
                   >

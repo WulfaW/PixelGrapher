@@ -87,7 +87,7 @@ export default function TemplateGallery({ onTemplateSelect, onCustomUpload }: Te
         {TEMPLATES.map((template) => (
           <Card
             key={template.id}
-            className="p-4 cursor-pointer group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-primary focus-within:ring-2 focus-within:ring-primary"
+            className="p-4 cursor-pointer group relative overflow-hidden border border-border transition-colors duration-200 hover:border-primary/50 focus-within:ring-2 focus-within:ring-primary"
             onClick={() => {
               onTemplateSelect?.(template.id);
             }}
@@ -117,8 +117,8 @@ export default function TemplateGallery({ onTemplateSelect, onCustomUpload }: Te
             </div>
 
             {/* Hover overlay */}
-            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out flex items-center justify-center backdrop-blur-sm">
-              <Button size="sm" variant="secondary" className="shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300" data-testid={`button-use-${template.id}`}>
+            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+              <Button size="sm" variant="secondary" data-testid={`button-use-${template.id}`}>
                 Use Template
               </Button>
             </div>
