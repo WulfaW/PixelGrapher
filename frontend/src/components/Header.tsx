@@ -159,18 +159,17 @@ export default function Header() {
             <Button
               variant="secondary"
               size="sm"
-              className="inline-flex bg-green-500 text-green-950 hover:bg-green-400 focus-visible:ring-green-500/60"
+              className="inline-flex items-center gap-2 transition-colors"
               data-testid="button-github-username"
               onClick={handleLogout}
             >
-              <Github className="w-4 h-4 mr-2" />
+              <Github className="w-4 h-4" />
               {githubUser}
-              <LogOut className="w-4 h-4 ml-2" />
+              <LogOut className="w-3.5 h-3.5 text-muted-foreground" />
             </Button>
           ) : (
             <Button
               size="sm"
-              className="inline-flex bg-muted text-muted-foreground hover:bg-muted/80"
               onClick={() => { window.location.href = `${getApiBaseUrl()}/api/auth/github`; }}
               data-testid="button-login-github-header"
             >

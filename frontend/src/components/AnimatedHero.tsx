@@ -1,17 +1,39 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
-const ASCII_PATTERNS = [
-  `   ∧＿∧
-  ( ･ω･)
-  ⊃⊃ `,
-  `  /\\_/\\
- ( o.o )
-  > ^ <`,
-  `  █▀▀▄
-  █▄▄▀
-  ▀  ▀`,
+// GitHub contribution graph mini-preview — cycles through pixel patterns
+const PIXEL_PATTERNS = [
+  // heart
+  [
+    [0,1,1,0,1,1,0],
+    [1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1],
+    [0,1,1,1,1,1,0],
+    [0,0,1,1,1,0,0],
+    [0,0,0,1,0,0,0],
+  ],
+  // smile
+  [
+    [0,1,1,0,1,1,0],
+    [0,1,1,0,1,1,0],
+    [0,0,0,0,0,0,0],
+    [1,0,0,0,0,0,1],
+    [0,1,0,0,0,1,0],
+    [0,0,1,1,1,0,0],
+  ],
+  // star
+  [
+    [0,0,0,1,0,0,0],
+    [0,1,0,1,0,1,0],
+    [0,0,1,1,1,0,0],
+    [1,1,1,1,1,1,1],
+    [0,0,1,1,1,0,0],
+    [0,1,0,0,0,1,0],
+  ],
 ];
+
+// GitHub-style intensity colours (dark mode friendly)
+const INTENSITY_COLORS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
 
 export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGetStarted?: () => void; onTemplateScroll?: () => void }) {
   const [currentPattern, setCurrentPattern] = useState(0);
@@ -20,51 +42,60 @@ export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGet
   useEffect(() => {
     setVisible(true);
     const interval = setInterval(() => {
-      setCurrentPattern((prev) => (prev + 1) % ASCII_PATTERNS.length);
-    }, 3000);
+      setCurrentPattern(prev => (prev + 1) % PIXEL_PATTERNS.length);
+    }, 2800);
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
-      
-      <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-        <pre className="font-mono text-primary text-4xl md:text-6xl whitespace-pre transition-opacity duration-1000">
-          {ASCII_PATTERNS[currentPattern]}
-        </pre>
-      </div>
+  const pattern = PIXEL_PATTERNS[currentPattern];
 
-      <div 
+  return (
+    <div className="relative min-h-[60vh] flex items-center justify-center">
+      <div
         className={`relative z-10 max-w-5xl mx-auto px-4 text-center transition-all duration-700 ${
           visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}
       >
-        <h1 className="text-5xl md:text-7xl font-bold mb-6">
-          ASCII Art to{' '}
-          <span className="bg-gradient-to-r from-primary via-chart-2 to-primary bg-clip-text text-transparent">
-            GitHub Graph
-          </span>
+        {/* Pixel art mini-preview */}
+        <div className="flex justify-center mb-10">
+          <div
+            className="grid gap-[3px] p-3 rounded-xl border border-white/[0.06] bg-[#0d1117]"
+            style={{ gridTemplateColumns: `repeat(${pattern[0].length}, 1fr)` }}
+          >
+            {pattern.map((row, r) =>
+              row.map((cell, c) => (
+                <div
+                  key={`${currentPattern}-${r}-${c}`}
+                  className="w-4 h-4 rounded-sm transition-colors duration-500"
+                  style={{ backgroundColor: INTENSITY_COLORS[cell ? 4 : 0] }}
+                />
+              ))
+            )}
+          </div>
+        </div>
+
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+          Paint your{' '}
+          <span className="text-primary">GitHub Graph</span>
         </h1>
-        
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-          Transform your creative ASCII art into stunning GitHub contribution patterns. 
-          Draw, customize, and generate commits to paint your profile.
+
+        <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+          Draw pixel art or type text — we turn it into real GitHub contribution commits on your profile.
         </p>
 
         <div className="flex flex-wrap gap-4 justify-center">
-          <Button 
-            size="lg" 
-            className="text-lg px-8"
+          <Button
+            size="lg"
+            className="text-base px-8 h-12"
             onClick={onGetStarted}
             data-testid="button-get-started"
           >
             Start Creating
           </Button>
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="text-lg px-8 backdrop-blur-sm"
+          <Button
+            size="lg"
+            variant="outline"
+            className="text-base px-8 h-12"
             onClick={onTemplateScroll}
             data-testid="button-view-templates"
           >
