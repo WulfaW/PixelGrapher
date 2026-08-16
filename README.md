@@ -1,88 +1,92 @@
 <div align="center">
-  <br />
-  <br />
-  <h1>PixelGrapher</h1>
-  <p>A web-based interface for engineering GitHub contribution graphs.</p>
-
-  <br />
-
-  [![License](https://img.shields.io/badge/License-MIT-black.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-  [![React](https://img.shields.io/badge/React-18-black.svg?style=for-the-badge)](https://reactjs.org/)
-  [![Vite](https://img.shields.io/badge/Vite-5-black.svg?style=for-the-badge)](https://vitejs.dev/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5-black.svg?style=for-the-badge)](https://www.typescriptlang.org/)
+  <img src="https://placehold.co/1200x400/0d1117/4ade80?text=PixelGrapher+Banner" alt="PixelGrapher Banner" />
   
-  <br />
-  <br />
+  <br/>
+  <h1>🎨 PixelGrapher</h1>
+  <p><strong>Transform your GitHub contribution graph into a digital canvas.</strong></p>
 
-  [Live Demo](https://pixel-grapher.vercel.app/) &nbsp;&middot;&nbsp; [Report Bug](https://github.com/WulfaW/PixelGrapher/issues)
+  [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel)](https://pixel-grapher.vercel.app/)
+  [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
+  [![License](https://img.shields.io/badge/License-MIT-4ade80?style=flat-square)](#license)
+  
+  <br/>
+  <br/>
+
+  [**Start Drawing Now**](https://pixel-grapher.vercel.app/) &nbsp;•&nbsp; [**Report a Bug**](https://github.com/WulfaW/PixelGrapher/issues)
 </div>
 
-<br />
-<br />
+<br/>
 
-> **Note to Maintainer:** Place a high-resolution screenshot of the PixelGrapher UI in the `docs/` folder named `hero.png`.
-> 
-> `![PixelGrapher Interface](./docs/hero.png)`
+## ✨ Why PixelGrapher?
 
-<br />
+Why settle for random green squares when you can tell a story? PixelGrapher is a web-based tool that lets you literally "paint" on your GitHub contribution calendar. Design your art, connect your account, and we securely push backdated commits to an empty repository to make your profile stand out.
 
-## Overview
+---
 
-PixelGrapher provides a structured environment to manipulate and customize standard GitHub contribution calendars. It interfaces directly with GitHub repositories via backdated commits to render custom patterns on a user's profile graph.
+## 🚀 Stunning Features
 
-* **52x7 Contribution Canvas**: An interactive 2D grid mapping precisely to the GitHub contribution calendar layout.
-* **Text-to-Pattern Engine**: Algorithmic conversion of string inputs into aligned 52x7 pixel matrices.
-* **Component Templates**: Pre-configured structural patterns available for immediate deployment onto the canvas.
-* **Stateless Authentication**: OAuth 2.0 integration via GitHub. Access tokens are strictly client-bound and utilize dual `localStorage`/`sessionStorage` fallbacks.
-* **Persistent State**: Automated client-side state preservation utilizing standard Web Storage APIs.
-* **Data Portability**: Full JSON import and export capabilities for graph states.
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="https://placehold.co/600x400/161b22/4ade80?text=52x7+Canvas" alt="Canvas Editor" />
+    </td>
+    <td width="50%">
+      <h3>🖌️ 52x7 Interactive Canvas</h3>
+      <p>A fully featured drawing board that maps exactly to GitHub's contribution layout. Includes pencil, eraser, undo/redo, and color intensity tools.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🤖 AI Text-to-Pattern</h3>
+      <p>Don't want to draw? Just type! Our built-in AI engine instantly converts any word (up to 13 characters) into perfectly aligned pixel art.</p>
+    </td>
+    <td width="50%" align="center">
+      <img src="https://placehold.co/600x400/161b22/4ade80?text=Text+to+Pattern" alt="AI Generator" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="https://placehold.co/600x400/161b22/4ade80?text=One-Click+Templates" alt="Templates" />
+    </td>
+    <td width="50%">
+      <h3>📚 One-Click Templates</h3>
+      <p>Jumpstart your creativity with pre-made templates. Space Invaders, Mario Mushrooms, Hearts, and more—ready to deploy with a single click.</p>
+    </td>
+  </tr>
+</table>
 
-<br />
+---
 
-## Workflow
+## 🔒 Privacy & Security
 
-1. **Design**: Construct the target pattern using the 52x7 matrix interface.
-2. **Authenticate**: Establish an OAuth session with GitHub and authorize access to a target repository. (A dedicated, empty repository is recommended to isolate commits).
-3. **Execute**: The backend engine compiles the matrix data into local, backdated Git commits and synchronizes them with the authorized upstream repository.
+We take your GitHub account seriously. 
+* **Zero Database:** We don't have a database. Your GitHub tokens are never stored on our servers.
+* **Local Storage:** All authentication happens via dual `localStorage` / `sessionStorage`.
+* **Bare-Metal Commits:** We use `isomorphic-git` to generate commits directly in memory without requiring server-side git binaries.
 
-<br />
+<br/>
 
-## Architecture
+## 👨‍💻 For Developers (Run Locally)
 
-The application operates on a decoupled architecture, isolating the client interface from the Git operations layer.
+<details>
+<summary><strong>Click to expand setup instructions</strong></summary>
+<br/>
 
-* **Frontend Environment**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui. (Deployed via Vercel).
-* **Backend Environment**: Express.js, Node.js. (Deployed via Render).
-* **Git Abstraction**: Uses `isomorphic-git` for native Node.js Git tree manipulation, eliminating host system dependencies on Git binaries.
+We've made local setup as painless as possible.
 
-<br />
-
-## Local Development
-
-### Prerequisites
-* Node.js 18.x or higher
-* GitHub Account with Developer Settings access
-
-<br />
-
-### 1. GitHub OAuth Configuration
-Local authentication requires a registered OAuth application:
-1. Navigate to `GitHub Settings > Developer Settings > OAuth Apps > New OAuth App`.
+### 1. GitHub OAuth Setup
+1. Go to `GitHub Settings > Developer Settings > OAuth Apps > New OAuth App`.
 2. **Homepage URL**: `http://localhost:5173`
-3. **Authorization callback URL**: `http://localhost:3000/api/auth/github/callback`
-4. Generate and secure the `Client ID` and `Client Secret`.
+3. **Callback URL**: `http://localhost:3000/api/auth/github/callback`
+4. Copy your `Client ID` and generate a `Client Secret`.
 
-<br />
-
-### 2. Backend Initialization
+### 2. Backend Setup
 ```bash
 git clone https://github.com/WulfaW/PixelGrapher.git
 cd PixelGrapher/backend
-
 npm install
 ```
-
-Configure environment variables in `backend/.env`:
+Create a `.env` file:
 ```env
 GITHUB_CLIENT_ID=your_client_id
 GITHUB_CLIENT_SECRET=your_client_secret
@@ -90,33 +94,26 @@ GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
 FRONTEND_URL=http://localhost:5173
 SESSION_SECRET=secure_random_string
 ```
-
-Execute the development server:
+Start server:
 ```bash
 npm run dev
 ```
 
-<br />
-
-### 3. Frontend Initialization
-Initialize the client application in a parallel terminal:
+### 3. Frontend Setup
 ```bash
-cd PixelGrapher/frontend
+cd ../frontend
 npm install
 npm run dev
 ```
-The interface will be accessible at `http://localhost:5173`.
+Open `http://localhost:5173` in your browser.
+</details>
 
-<br />
+<br/>
 
-## License
+## 🤝 Contributing & License
+We love open source! Feel free to fork this project, submit PRs, or open issues. PixelGrapher is released under the **MIT License**.
 
-Released under the MIT License. Reference the `LICENSE` document for comprehensive terms.
-
-<br />
-<br />
-<br />
-
+<br/>
 <div align="center">
-  Made with 💚 and ASCII by WulfaW
+  <p>Made with 💚 and ASCII by <b>WulfaW</b></p>
 </div>
