@@ -5,7 +5,7 @@ export function getApiBaseUrl(): string {
   }
   // Fallback for development
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return 'http://localhost:3000';
+    return 'http://localhost:5000';
   }
   // Default to Render.com backend
   return 'https://pixelgrapher.onrender.com';
@@ -18,12 +18,19 @@ export async function apiFetch(
   const baseUrl = getApiBaseUrl();
   const url = `${baseUrl}/api${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
+  const token = localStorage.getItem('pg_token') || sessionStorage.getItem('pg_token');
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   return fetch(url, {
     ...options,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 }

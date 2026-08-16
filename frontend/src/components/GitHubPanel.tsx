@@ -55,9 +55,45 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      // URL'i temizle ve sayfayı yenile - bu en garantili çözüm
-      window.history.replaceState({}, '', window.location.pathname);
-      window.location.reload();
+      const token = params.get('pg_token');
+      const usernameParam = params.get('pg_user');
+      if (token && usernameParam) {
+        let saved = false;
+        try {
+          localStorage.setItem('pg_token', token);
+          localStorage.setItem('pg_user', usernameParam);
+          saved = true;
+        } catch (storageError: any) {
+          console.warn("LocalStorage blocked, trying sessionStorage:", storageError);
+        }
+
+        try {
+          sessionStorage.setItem('pg_token', token);
+          sessionStorage.setItem('pg_user', usernameParam);
+          saved = true;
+        } catch (sessionError: any) {
+          console.error("sessionStorage also blocked:", sessionError);
+        }
+
+        if (saved) {
+          window.history.replaceState({}, '', window.location.pathname);
+          window.location.reload();
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Depolama Hatası",
+            description: "Tarayıcı belleğine (local/session) yazılamadı. Gizli sekmeyi kapatıp veya tarayıcı ayarlarından site verilerine izin verip tekrar deneyin.",
+          });
+        }
+      } else {
+        console.error("Giriş parametreleri eksik:", { token, usernameParam });
+        // Parametreleri temizle ama yenileme yapma ki kullanıcı URL'i veya konsolu görsün
+        toast({
+          variant: "destructive",
+          title: "Giriş Başarısız",
+          description: `Giriş tokenı alınamadı. Token: ${token}, Kullanıcı: ${usernameParam}`,
+        });
+      }
       return; // Reload edildikten sonra devam etmeye gerek yok
     }
 
@@ -206,6 +242,11 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       setUsername('');
       setSelectedRepo('');
       setRepos([]);
+
+      localStorage.removeItem('pg_token');
+      localStorage.removeItem('pg_user');
+      sessionStorage.removeItem('pg_token');
+      sessionStorage.removeItem('pg_user');
 
       toast({
         title: "Disconnected",

@@ -5,9 +5,11 @@ import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { log } from "./vite.js";
 import crypto from "crypto";
+import { tokenSessions } from "./storage.js";
 
 const app = express();
 app.set("trust proxy", 1);
+app.disable('etag');
 
 // CORS configuration - MUST be specific origin for credentials
 app.use(cors({
@@ -34,13 +36,30 @@ app.use(
     saveUninitialized: false,
     proxy: true,
     cookie: {
-      secure: true, // MUST be true for cross-site
-      sameSite: 'none', // MUST be 'none' for cross-site
+      secure: process.env.NODE_ENV === 'production', // MUST be true for cross-site (production only)
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
+
+// Token middleware to intercept Authorization header and mock passport auth
+app.use((req: any, _res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const sessionUser = tokenSessions.get(token);
+    if (sessionUser) {
+      req.user = sessionUser;
+      req.isAuthenticated = () => true;
+      req.logout = (cb: any) => {
+        if (typeof cb === 'function') cb();
+      };
+    }
+  }
+  next();
+});
 
 // Health check endpoint - simple test to verify server is running
 app.get('/health', (req, res) => {

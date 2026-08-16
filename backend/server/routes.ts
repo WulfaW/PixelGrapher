@@ -1,9 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage.js";
+import { storage, tokenSessions } from "./storage.js";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { GitOperations, generateCommitPlan, sleep } from "./git-operations.js";
+import { randomUUID } from "crypto";
 
 // Security / operational limits for long-running SSE jobs
 const MAX_COMMITS = Number(process.env.MAX_COMMITS || 2000);
@@ -65,20 +66,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Invalid FRONTEND_URL:", rawFrontendUrl);
       }
 
-      // Explicitly save session before redirect to ensure cookie is set
-      req.session.save((err) => {
-        if (err) {
-          console.error("Session save error:", err);
-          return res.redirect(`${targetUrl}?error=session_save_failed`);
-        }
-        // Redirect with success parameter so frontend knows to refresh auth status
-        res.redirect(`${targetUrl}?auth_success=true`);
-      });
+      const user = req.user as any;
+      const token = randomUUID();
+      tokenSessions.set(token, user);
+
+      res.redirect(`${targetUrl}?auth_success=true&pg_token=${token}&pg_user=${user.username}`);
     }
   );
 
   // Kullanıcının GitHub bağlantı durumunu kontrol et
   app.get("/api/auth/status", (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
     if (req.isAuthenticated()) {
       const user = req.user as any;
       res.json({
@@ -95,6 +96,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Logout endpoint
   app.post("/api/auth/logout", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      tokenSessions.delete(token);
+    }
     req.logout(() => {
       res.json({ success: true });
     });
@@ -350,12 +356,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Avoid logging tokens. Use token directly for remote url but do not persist in logs.
       const token = String(user.accessToken || '');
-      const remoteUrl = `https://${token}@github.com/${repository}.git`;
+      const remoteUrl = `https://github.com/${repository}.git`;
       try {
         await gitOps.addRemote(remoteUrl);
 
         sendProgress({ status: 'pushing', message: 'Pushing commits to GitHub...' });
-        await gitOps.push('main');
+        await gitOps.push('main', token);
       } finally {
         // Immediately sanitize token from memory/session to reduce exposure risk
         try {
@@ -442,9 +448,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const token = String(user.accessToken || '');
-      const remoteUrl = `https://${token}@github.com/${repository}.git`;
+      const remoteUrl = `https://github.com/${repository}.git`;
 
-      await gitOps.resetRepo(remoteUrl);
+      await gitOps.resetRepo(remoteUrl, 'main', token);
 
       res.json({
         success: true,

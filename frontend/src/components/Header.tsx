@@ -86,6 +86,10 @@ export default function Header() {
       if (!res.ok && res.status !== 401) {
         throw new Error('Logout failed');
       }
+      localStorage.removeItem('pg_token');
+      localStorage.removeItem('pg_user');
+      sessionStorage.removeItem('pg_token');
+      sessionStorage.removeItem('pg_user');
       setGithubUser(null);
     } catch (err) {
       console.error('Logout failed', err);

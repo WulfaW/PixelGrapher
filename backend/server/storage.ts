@@ -127,3 +127,6 @@ export class MemStorage implements IStorage {
 }
 
 export const storage = new MemStorage();
+
+// In-memory session store mapping generated tokens to passport user objects
+export const tokenSessions = new Map<string, any>();
