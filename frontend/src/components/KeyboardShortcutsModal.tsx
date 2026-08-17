@@ -82,12 +82,12 @@ export default function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardS
         </div>
 
         <div className="mt-6 p-4 bg-muted rounded-lg">
-          <p className="text-sm text-muted-foreground flex items-center">
+          <div className="text-sm text-muted-foreground flex items-center">
             <Lightbulb className="w-4 h-4 mr-2 text-yellow-500" />
             <span>
               <strong>Tip:</strong> Press <Badge variant="secondary" className="mx-1 font-mono">?</Badge> anytime to view these shortcuts
             </span>
-          </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -467,6 +467,7 @@ export default function AsciiCanvas({ onGridChange, externalGrid, year, onGenera
                 variant="outline"
                 onClick={handleClear}
                 title="Clear (C)"
+                data-testid="button-clear-canvas"
               >
                 <Trash2 className="w-4 h-4 text-destructive" />
               </Button>

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from '@/components/Header';
 import SEOHead from '@/components/SEOHead';
 import AnimatedHero from '@/components/AnimatedHero';
@@ -10,6 +10,7 @@ import CommitPreview from '@/components/CommitPreview';
 import ProgressModal from '@/components/ProgressModal';
 import TextToPattern from '@/components/TextToPattern';
 import SavedPatterns from '@/components/SavedPatterns';
+import KeyboardShortcutsModal from '@/components/KeyboardShortcutsModal';
 import Footer from '@/components/Footer';
 import { getTemplate } from '@/lib/templates';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +22,7 @@ type CellIntensity = 0 | 1 | 2 | 3 | 4;
 export default function Home() {
   const [grid, setGrid] = useState<CellIntensity[][]>([]);
   const [showUpload, setShowUpload] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -34,6 +36,19 @@ export default function Home() {
 
   const calendarRange = getCalendarRange(parseInt(selectedYear, 10));
   const weeksCount = calendarRange.weeksCount;
+
+  // Global keyboard listener for shortcuts modal help
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === '?') {
+        e.preventDefault();
+        setShowShortcuts(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const normalizeGridToWeeks = (incoming: CellIntensity[][]): CellIntensity[][] => {
     return Array(7)
@@ -202,6 +217,10 @@ export default function Home() {
         open={showUpload}
         onOpenChange={setShowUpload}
         onApply={(g) => { setGrid(g); toast({ title: 'Custom pattern loaded', description: 'Ready to edit on canvas.' }); smoothScrollTo(canvasRef.current); }}
+      />
+      <KeyboardShortcutsModal
+        open={showShortcuts}
+        onOpenChange={setShowShortcuts}
       />
     </div>
   );
