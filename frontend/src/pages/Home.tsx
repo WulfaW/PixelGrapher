@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import Header from '@/components/Header';
 import SEOHead from '@/components/SEOHead';
 import AnimatedHero from '@/components/AnimatedHero';
@@ -15,7 +15,15 @@ import Footer from '@/components/Footer';
 import { getTemplate } from '@/lib/templates';
 import { useToast } from '@/hooks/use-toast';
 import { apiFetch } from '@/lib/api';
-import { getCalendarRange } from '@shared/calendar';
+import { getCalendarRange, dateForCell } from '@shared/calendar';
+
+const ContributionSkyline = lazy(() => import('@/components/ContributionSkyline'));
+
+// Same colours as CommitPreview, levels 1-4, so both previews match.
+const SKYLINE_PALETTE = {
+  light: ['#9be9a8', '#40c463', '#30a14e', '#216e39'],
+  dark: ['#0e4429', '#006d32', '#26a641', '#39d353'],
+};
 
 type CellIntensity = 0 | 1 | 2 | 3 | 4;
 
@@ -36,6 +44,15 @@ export default function Home() {
 
   const calendarRange = getCalendarRange(parseInt(selectedYear, 10));
   const weeksCount = calendarRange.weeksCount;
+
+  // Intensity is the commit count (baseIntensity is fixed at 1), so it doubles as count and level.
+  const skylineData = useMemo(() => {
+    const out: { date: string; count: number; level: number }[] = [];
+    grid.forEach((row, day) => row.forEach((v, week) => {
+      if (v > 0) out.push({ date: dateForCell(day, week, calendarRange).toISOString().slice(0, 10), count: v, level: v });
+    }));
+    return out;
+  }, [grid, calendarRange.startSunday.getTime()]);
 
   // Global keyboard listener for shortcuts modal help
   useEffect(() => {
@@ -190,6 +207,17 @@ export default function Home() {
             />
             <AsciiCanvas onGridChange={setGrid} externalGrid={grid} year={selectedYear} onGenerate={handleGenerate} onYearChange={setSelectedYear} />
             <CommitPreview grid={grid} />
+            <Suspense fallback={null}>
+              <ContributionSkyline
+                data={skylineData}
+                endDate={calendarRange.endSaturday}
+                weeks={weeksCount}
+                palette={SKYLINE_PALETTE}
+                unit="commit"
+                hideCurrentStreak
+                title={`3D preview · ${selectedYear}`}
+              />
+            </Suspense>
           </section>
           <section className="space-y-6">
             <SavedPatterns
