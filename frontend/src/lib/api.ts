@@ -34,3 +34,8 @@ export async function apiFetch(
     headers,
   });
 }
+
+// Render free tier sleeps when idle; pinging on page load starts waking it before the user's first real request.
+export function wakeBackend(): void {
+  fetch(`${getApiBaseUrl()}/health`, { mode: 'no-cors' }).catch(() => {});
+}
