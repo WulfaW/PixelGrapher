@@ -22,7 +22,7 @@ export default function ErrorPage({ error, info, onRetry }: ErrorPageProps) {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-red-50 to-orange-50 dark:from-gray-900 dark:via-red-950 dark:to-orange-950 p-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-red-50 to-orange-50 dark:from-gray-900 dark:via-red-950 dark:to-orange-950 p-4 overflow-hidden">
       {/* Animated background patterns */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating circles */}
@@ -52,7 +52,7 @@ export default function ErrorPage({ error, info, onRetry }: ErrorPageProps) {
         
         {/* More decorative elements */}
         <div className="absolute bottom-40 left-1/4 w-20 h-20 border border-red-300/20 dark:border-red-700/20 rounded-lg rotate-6 animate-spin-slow"></div>
-        <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-gradient-to-br from-red-300/20 to-orange-300/20 dark:from-red-700/20 dark:to-orange-700/20 rounded-full animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-linear-to-br from-red-300/20 to-orange-300/20 dark:from-red-700/20 dark:to-orange-700/20 rounded-full animate-pulse"></div>
       </div>
 
       {/* Decorative ASCII watermarks */}
@@ -70,7 +70,7 @@ export default function ErrorPage({ error, info, onRetry }: ErrorPageProps) {
         </div>
       </div>
 
-      <Card className="relative max-w-xl w-full p-8 space-y-6 text-center shadow-xl backdrop-blur-sm bg-background/90 z-10">
+      <Card className="relative max-w-xl w-full p-8 space-y-6 text-center shadow-xl backdrop-blur-xs bg-background/90 z-10">
         <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
           <AlertTriangle className="w-8 h-8 text-destructive" />
         </div>

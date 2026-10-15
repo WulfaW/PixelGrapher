@@ -124,10 +124,10 @@ export default function SavedPatterns({ onLoadPattern }: SavedPatternsProps) {
               >
                 <div className="flex items-start gap-3">
                   {/* Mini preview */}
-                  <div className="flex-shrink-0 bg-muted rounded p-1">
-                    <div className="flex gap-[1px]">
+                  <div className="shrink-0 bg-muted rounded p-1">
+                    <div className="flex gap-px">
                       {Array.from({ length: 13 }).map((_, weekIndex) => (
-                        <div key={weekIndex} className="flex flex-col gap-[1px]">
+                        <div key={weekIndex} className="flex flex-col gap-px">
                           {Array.from({ length: 7 }).map((_, dayIndex) => {
                             const weekIdx = Math.floor((weekIndex / 13) * pattern.grid[0].length);
                             const value = pattern.grid[dayIndex]?.[weekIdx] || 0;

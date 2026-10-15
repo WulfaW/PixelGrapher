@@ -64,7 +64,7 @@ export default function AnimatedHero({ onGetStarted, onTemplateScroll }: { onGet
         {/* Pixel art mini-preview */}
         <div className="flex justify-center mb-10">
           <div
-            className="grid gap-[3px] p-3 rounded-xl border bg-card shadow-sm"
+            className="grid gap-[3px] p-3 rounded-xl border bg-card shadow-xs"
             style={{ gridTemplateColumns: `repeat(${pattern[0].length}, 1fr)` }}
           >
             {pattern.map((row, r) =>

@@ -29,7 +29,7 @@ export default function HowItWorks() {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {steps.map((step, index) => (
-          <Card key={index} className="p-6 text-center space-y-4 bg-white/50 dark:bg-card/50 backdrop-blur-sm border-dashed">
+          <Card key={index} className="p-6 text-center space-y-4 bg-white/50 dark:bg-card/50 backdrop-blur-xs border-dashed">
             <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               {step.icon}
             </div>

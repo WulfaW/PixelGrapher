@@ -116,7 +116,7 @@ export default function TextToPattern({
       </div>
 
       <div className="space-y-4 mt-4">
-        <div className="grid gap-4 md:grid-cols-[1fr,auto,auto] items-start">
+        <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] items-start">
           <div className="space-y-2">
             <Label htmlFor="text-input">Your Text</Label>
             <Input

@@ -106,7 +106,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
               onClick={() => setPreviewTheme('light')}
               className={cn(
                 "px-3 py-1 text-xs rounded-md transition-all",
-                previewTheme === 'light' ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
+                previewTheme === 'light' ? "bg-white shadow-xs text-black" : "text-muted-foreground hover:text-foreground"
               )}
             >
               Light
@@ -115,7 +115,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
               onClick={() => setPreviewTheme('dark')}
               className={cn(
                 "px-3 py-1 text-xs rounded-md transition-all",
-                previewTheme === 'dark' ? "bg-slate-800 shadow-sm text-white" : "text-muted-foreground hover:text-foreground"
+                previewTheme === 'dark' ? "bg-slate-800 shadow-xs text-white" : "text-muted-foreground hover:text-foreground"
               )}
             >
               Dark
@@ -133,7 +133,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
             {/* Month Labels - align with grid */}
             <div className="flex gap-0 mb-2">
               {/* Spacer for day labels column */}
-              <div className="w-8 flex-shrink-0" /> {/* Reduced width to align better */}
+              <div className="w-8 shrink-0" /> {/* Reduced width to align better */}
               {/* Month labels - no wrapper, render directly */}
               <div className="flex w-full justify-between">
                 {monthBoundaries.map((boundary, idx) => {
@@ -156,7 +156,7 @@ const CommitPreview = memo(function CommitPreview({ grid, className }: CommitPre
             {/* Day Labels + Grid */}
             <div className="flex gap-1">
               {/* Day labels on left */}
-              <div className="flex flex-col gap-[3px] flex-shrink-0 w-8">
+              <div className="flex flex-col gap-[3px] shrink-0 w-8">
                 {DAYS.map((day, idx) => (
                   <div
                     key={`day-${idx}`}

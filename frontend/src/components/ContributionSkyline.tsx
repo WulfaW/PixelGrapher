@@ -1140,7 +1140,7 @@ export default function ContributionSkyline({
       canvas.removeEventListener("pointerleave", onLeave)
       canvas.removeEventListener("dblclick", onDbl)
       canvas.removeEventListener("keydown", onKey)
-      canvas.removeEventListener("blur", onBlur)
+      canvas.removeEventListener("blur-sm", onBlur)
       engine.current = null
     }
     // The loop reads everything else through cfg; it is built once per mount.
@@ -1235,7 +1235,7 @@ export default function ContributionSkyline({
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}
-            className="relative w-full overflow-hidden rounded-md outline-offset-4 has-[:focus-visible]:outline-2"
+            className="relative w-full overflow-hidden rounded-md outline-offset-4 has-focus-visible:outline-2"
             style={{ height: 150, outlineColor: C_FG }}
           >
             <canvas
@@ -1246,7 +1246,7 @@ export default function ContributionSkyline({
                 nf.format(stats.total) + " " + noun(stats.total) + " between " + range(stats.first, stats.last, true) +
                 ", shown as a " + (is3d ? "3D skyline" : "heat map") + ". Use the arrow keys to read individual days."
               }
-              className="absolute top-0 left-0 block outline-none"
+              className="absolute top-0 left-0 block outline-hidden"
               style={{ maxWidth: "none", touchAction: is3d && orbit ? "pan-y" : "auto" }}
             />
 

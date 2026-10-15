@@ -19,9 +19,9 @@ const MiniGridPreview = memo(function MiniGridPreview({ grid }: { grid: number[]
   
   return (
     <div className="space-y-1">
-      <div className="grid gap-[1px] bg-muted/20 p-1 rounded">
+      <div className="grid gap-px bg-muted/20 p-1 rounded">
         {grid.map((row, i) => (
-          <div key={i} className="flex gap-[1px]">
+          <div key={i} className="flex gap-px">
             {row.map((cell, j) => (
               <div
                 key={j}

@@ -20,9 +20,9 @@ function MiniGrid({ grid }: { grid: number[][] }) {
   const total = useMemo(() => grid.reduce((s, r) => s + r.reduce((a, b) => a + b, 0), 0), [grid]);
   return (
     <div className="space-y-2">
-      <div className="grid gap-[1px] bg-muted/20 p-1 rounded max-w-full overflow-auto">
+      <div className="grid gap-px bg-muted/20 p-1 rounded max-w-full overflow-auto">
         {grid.map((row, i) => (
-          <div key={i} className="flex gap-[1px]">
+          <div key={i} className="flex gap-px">
             {row.map((cell, j) => (
               <div
                 key={j}
