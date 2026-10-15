@@ -1,7 +1,7 @@
 // API utility to handle base URL based on environment
 export function getApiBaseUrl(): string {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
   }
   // Fallback for development
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {

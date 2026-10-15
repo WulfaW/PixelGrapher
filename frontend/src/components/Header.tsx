@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { apiFetch, getApiBaseUrl } from '@/lib/api';
 
 export default function Header() {
-  const [isDark, setIsDark] = useState(() => {
-    // Check localStorage or default to dark
+  // Dark on the server render; the saved choice is applied right after mount.
+  const [isDark, setIsDark] = useState(true);
+  useEffect(() => {
     const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : true;
-  });
+    if (saved) setIsDark(saved === 'dark');
+  }, []);
   const [githubUser, setGithubUser] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,7 +19,6 @@ export default function Header() {
     } else {
       document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   useEffect(() => {
@@ -77,6 +77,7 @@ export default function Header() {
   }, []);
 
   const toggleTheme = () => {
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
     setIsDark(!isDark);
   };
 

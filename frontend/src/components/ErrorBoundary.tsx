@@ -23,7 +23,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   componentDidCatch(error: Error, info: any) {
     this.setState({ info: info?.componentStack });
     // Future: send to monitoring service (Sentry / Log API)
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== 'production') {
       console.error('ErrorBoundary caught error:', error, info);
     }
   }

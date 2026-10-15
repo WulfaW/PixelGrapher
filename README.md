@@ -6,7 +6,8 @@
 Draw pixel art or type a word, preview it in 2D and 3D, then push it to your profile as real, backdated commits.
 
 [![Live demo](https://img.shields.io/badge/Live_demo-pixel--grapher.vercel.app-16a34a?style=flat-square&logo=vercel&logoColor=white)](https://pixel-grapher.vercel.app/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-16a34a?style=flat-square)](LICENSE)
 
@@ -73,7 +74,7 @@ Please read this before connecting your account.
 
 | Area | Tools |
 | --- | --- |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Radix UI, Lucide icons, TanStack Query |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Radix UI, Lucide icons, TanStack Query |
 | 3D preview | A hand-written canvas renderer, no WebGL or 3D library |
 | Backend | Node.js, Express, Passport (GitHub OAuth), isomorphic-git, memfs |
 | Testing | Vitest (unit), Playwright (end to end) |
@@ -123,7 +124,7 @@ npm run dev
 ```bash
 cd ../frontend
 npm install
-echo "VITE_API_URL=http://localhost:3000" > .env.local
+echo "NEXT_PUBLIC_API_URL=http://localhost:3000" > .env.local
 npm run dev
 ```
 
@@ -145,7 +146,9 @@ npm test              # token and commit-plan tests
 
 ```
 PixelGrapher/
-├── frontend/             React app (Vite)
+├── frontend/             Next.js app
+│   ├── src/app/          Next.js layout, metadata and page
+│   ├── src/screens/      Page-level components
 │   ├── src/components/   Canvas, templates, 3D skyline, GitHub panel…
 │   ├── src/lib/          Pattern generators, templates, API helpers
 │   └── tests/            Playwright end-to-end tests

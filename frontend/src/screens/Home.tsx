@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+'use client';
+
+import { useState, useRef, useEffect, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
-import SEOHead from '@/components/SEOHead';
 import AnimatedHero from '@/components/AnimatedHero';
 import HowItWorks from '@/components/HowItWorks';
 import AsciiCanvas from '@/components/AsciiCanvas';
@@ -17,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiFetch } from '@/lib/api';
 import { getCalendarRange, dateForCell } from '@shared/calendar';
 
-const ContributionSkyline = lazy(() => import('@/components/ContributionSkyline'));
+const ContributionSkyline = dynamic(() => import('@/components/ContributionSkyline'), { ssr: false });
 
 // Same colours as CommitPreview, levels 1-4, so both previews match.
 const SKYLINE_PALETTE = {
@@ -187,7 +189,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background bg-dot-grid">
-      <SEOHead />
       <Header />
       <main>
         <AnimatedHero onGetStarted={handleGetStarted} onTemplateScroll={handleTemplateScroll} />
@@ -207,7 +208,6 @@ export default function Home() {
             />
             <AsciiCanvas onGridChange={setGrid} externalGrid={grid} year={selectedYear} onGenerate={handleGenerate} onYearChange={setSelectedYear} />
             <CommitPreview grid={grid} />
-            <Suspense fallback={null}>
               <ContributionSkyline
                 data={skylineData}
                 endDate={calendarRange.endSaturday}
@@ -217,7 +217,6 @@ export default function Home() {
                 hideCurrentStreak
                 title={`3D preview · ${selectedYear}`}
               />
-            </Suspense>
           </section>
           <section className="space-y-6">
             <SavedPatterns

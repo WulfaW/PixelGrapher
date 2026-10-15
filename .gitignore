@@ -16,3 +16,7 @@ test-results/
 
 # Local agent notes
 AGENT_RULES.MD
+
+# Next.js
+.next/
+next-env.d.ts
