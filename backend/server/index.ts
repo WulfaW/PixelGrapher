@@ -5,7 +5,7 @@ import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { log } from "./vite.js";
 import crypto from "crypto";
-import { tokenSessions } from "./storage.js";
+import { unsealUser } from "./token.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -49,7 +49,7 @@ app.use((req: any, _res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
-    const sessionUser = tokenSessions.get(token);
+    const sessionUser = unsealUser(token);
     if (sessionUser) {
       req.user = sessionUser;
       req.isAuthenticated = () => true;

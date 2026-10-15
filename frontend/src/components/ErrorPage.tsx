@@ -112,7 +112,7 @@ export default function ErrorPage({ error, info, onRetry }: ErrorPageProps) {
               </pre>
             )}
             <Button
-              size="xs"
+              size="sm"
               variant="secondary"
               onClick={() => {
                 const text = `${error?.name}: ${error?.message}\n${error?.stack}\n${info || ''}`;

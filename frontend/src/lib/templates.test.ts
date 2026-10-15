@@ -4,7 +4,7 @@ import { getAllTemplates, getTemplate } from './templates';
 describe('Templates', () => {
   describe('getTemplate', () => {
     it('should return HELLO template', () => {
-      const grid = getTemplate('hello');
+      const grid = getTemplate('hello')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
@@ -12,49 +12,49 @@ describe('Templates', () => {
     });
 
     it('should return Heart template', () => {
-      const grid = getTemplate('heart');
+      const grid = getTemplate('heart')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return Cat template', () => {
-      const grid = getTemplate('cat');
+      const grid = getTemplate('cat')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return Mountains template', () => {
-      const grid = getTemplate('mountains');
+      const grid = getTemplate('mountains')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return Wave template', () => {
-      const grid = getTemplate('wave');
+      const grid = getTemplate('wave')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return Gradient template', () => {
-      const grid = getTemplate('gradient');
+      const grid = getTemplate('gradient')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return Pixel template', () => {
-      const grid = getTemplate('pixel');
+      const grid = getTemplate('pixel')!;
       expect(grid).toBeDefined();
       expect(grid).toHaveLength(7);
       expect(grid[0]).toHaveLength(52);
     });
 
     it('should return null for non-existent template', () => {
-      const grid = getTemplate('non-existent');
+      const grid = getTemplate('non-existent')!;
       expect(grid).toBeNull();
     });
 

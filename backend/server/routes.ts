@@ -1,10 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage, tokenSessions } from "./storage.js";
+import { sealUser } from "./token.js";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { GitOperations, generateCommitPlan, sleep } from "./git-operations.js";
-import { randomUUID } from "crypto";
 
 // Security / operational limits for long-running SSE jobs
 const MAX_COMMITS = Number(process.env.MAX_COMMITS || 2000);
@@ -44,14 +43,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.use(passport.initialize());
-  app.use(passport.session());
 
   // GitHub OAuth Routes
   app.get("/api/auth/github", passport.authenticate("github", { scope: ["user:email", "repo"] }));
 
   app.get(
     "/api/auth/github/callback",
+    // session: false, the login lives in the sealed token only (no server-side session store)
     passport.authenticate("github", {
+      session: false,
       failureRedirect: `${process.env.FRONTEND_URL || 'https://pixel-grapher.vercel.app'}?error=auth_failed`
     }),
     (req, res) => {
@@ -67,10 +67,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = req.user as any;
-      const token = randomUUID();
-      tokenSessions.set(token, user);
+      // Only what the API needs goes into the token (the full GitHub profile would bloat it).
+      const token = sealUser({ accessToken: user.accessToken, username: user.username, displayName: user.displayName, createdAt: user.createdAt });
 
-      res.redirect(`${targetUrl}?auth_success=true&pg_token=${token}&pg_user=${user.username}`);
+      // The token travels in the URL fragment: browsers never send it to servers or write it to logs.
+      res.redirect(`${targetUrl}?auth_success=true&pg_user=${encodeURIComponent(user.username)}#pg_token=${token}`);
     }
   );
 
@@ -96,11 +97,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Logout endpoint
   app.post("/api/auth/logout", (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      tokenSessions.delete(token);
-    }
     req.logout(() => {
       res.json({ success: true });
     });

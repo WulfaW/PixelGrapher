@@ -6,8 +6,13 @@ vite.config.ts.*
 *.tar.gz
 .env
 .env.local
-package-lock.json
 
 # Temporary Git repositories created by PixelGrapher
 pixelgrapher-repos/
 *.pixelgrapher-temp/
+# Test output
+playwright-report/
+test-results/
+
+# Local agent notes
+AGENT_RULES.MD

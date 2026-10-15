@@ -26,7 +26,6 @@ export default defineConfig({
         manualChunks: {
           "react-vendor": ["react", "react-dom"],
           "ui-vendor": ["lucide-react"],
-          "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod", "zod-validation-error"],
         },
       },
     },

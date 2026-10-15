@@ -55,7 +55,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
     // URL'den GitHub auth success parametresini kontrol et
     const params = new URLSearchParams(window.location.search);
     if (params.get('auth_success') === 'true') {
-      const token = params.get('pg_token');
+      const token = new URLSearchParams(window.location.hash.slice(1)).get('pg_token');
       const usernameParam = params.get('pg_user');
       if (token && usernameParam) {
         let saved = false;

@@ -32,8 +32,8 @@ describe('Text to Pattern Generator', () => {
       const gridLow = generateTextPattern({ text: 'A', baseIntensity: 2 });
       const gridHigh = generateTextPattern({ text: 'A', baseIntensity: 4 });
       
-      const sumLow = gridLow.flat().reduce((a, b) => a + b, 0);
-      const sumHigh = gridHigh.flat().reduce((a, b) => a + b, 0);
+      const sumLow = gridLow.flat().reduce<number>((a, b) => a + b, 0);
+      const sumHigh = gridHigh.flat().reduce<number>((a, b) => a + b, 0);
       
       expect(sumHigh).toBeGreaterThanOrEqual(sumLow);
     });
@@ -112,9 +112,9 @@ describe('Text to Pattern Generator', () => {
       const realistic = generateRealisticTextPattern('TEST');
       const heavy = generateHeavyTextPattern('TEST');
       
-      const cleanSum = clean.flat().reduce((a, b) => a + b, 0);
-      const realisticSum = realistic.flat().reduce((a, b) => a + b, 0);
-      const heavySum = heavy.flat().reduce((a, b) => a + b, 0);
+      const cleanSum = clean.flat().reduce<number>((a, b) => a + b, 0);
+      const realisticSum = realistic.flat().reduce<number>((a, b) => a + b, 0);
+      const heavySum = heavy.flat().reduce<number>((a, b) => a + b, 0);
       
       // Heavy should have more total intensity than clean
       expect(heavySum).toBeGreaterThan(cleanSum);
