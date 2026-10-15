@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactElement } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -455,7 +455,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
                   <SelectContent>
                     {(() => {
                       const minYear = joinYear ?? currentYear - 5;
-                      const years = [] as JSX.Element[];
+                      const years = [] as ReactElement[];
                       for (let y = currentYear; y >= minYear; y--) {
                         years.push(<SelectItem key={y} value={y.toString()}>{y}</SelectItem>);
                       }
