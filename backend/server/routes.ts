@@ -6,6 +6,12 @@ import { Strategy as GitHubStrategy } from "passport-github2";
 import { GitOperations, generateCommitPlan, sleep } from "./git-operations.js";
 
 // Security / operational limits for long-running SSE jobs
+// GitHub App mode: the user picks the repositories on GitHub's install screen and the token can only
+// touch those. Without GITHUB_APP_SLUG the old OAuth-app behaviour (broad `repo` scope) is kept.
+const APP_SLUG = process.env.GITHUB_APP_SLUG;
+const INSTALL_URL = APP_SLUG ? `https://github.com/apps/${APP_SLUG}/installations/new` : undefined;
+const GH_HEADERS = (token: string) => ({ 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' });
+
 const MAX_COMMITS = Number(process.env.MAX_COMMITS || 2000);
 const MAX_CONCURRENT_JOBS_PER_USER = Number(process.env.MAX_CONCURRENT_JOBS_PER_USER || 1);
 
@@ -45,7 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(passport.initialize());
 
   // GitHub OAuth Routes
-  app.get("/api/auth/github", passport.authenticate("github", { scope: ["user:email", "repo"] }));
+  app.get("/api/auth/github", passport.authenticate("github", APP_SLUG ? {} : { scope: ["user:email", "repo"] }));
 
   app.get(
     "/api/auth/github/callback",
@@ -110,11 +116,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = req.user as any;
+      if (APP_SLUG) {
+        const inst = await fetch('https://api.github.com/user/installations?per_page=100', { headers: GH_HEADERS(user.accessToken) });
+        if (!inst.ok) throw new Error('Failed to fetch GitHub App installations');
+        const { installations } = await inst.json();
+        const lists = await Promise.all(installations.map(async (i: any) => {
+          const r = await fetch(`https://api.github.com/user/installations/${i.id}/repositories?per_page=100`, { headers: GH_HEADERS(user.accessToken) });
+          return r.ok ? (await r.json()).repositories.map((repo: any) => repo.full_name as string) : [];
+        }));
+        return res.json({ repos: lists.flat(), installUrl: INSTALL_URL });
+      }
+
       const response = await fetch('https://api.github.com/user/repos?sort=updated&per_page=100', {
-        headers: {
-          'Authorization': `token ${user.accessToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
+        headers: GH_HEADERS(user.accessToken)
       });
 
       if (!response.ok) {

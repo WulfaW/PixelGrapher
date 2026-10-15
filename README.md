@@ -61,7 +61,7 @@ Intensity maps straight to commit count: a level-3 square is three commits on th
 
 Please read this before connecting your account.
 
-- **OAuth scope.** The app asks for `user:email` and `repo`. `repo` is GitHub's broad scope, it includes private repositories, because GitHub has no narrower scope for pushing commits. Use a dedicated, empty repository for your art, and revoke the app under *GitHub → Settings → Applications* when you are done.
+- **Repository access.** Run as a GitHub App (the hosted version is being moved to this), PixelGrapher can only write to the repositories you pick on GitHub's install screen, with *Contents: read & write* and nothing else. In the older OAuth-app mode it asks for the broad `repo` scope instead, which includes all your private repositories. Either way, use a dedicated, empty repository for your art, and uninstall or revoke the app under *GitHub → Settings → Applications* when you are done.
 - **No database, no server-side sessions.** After login the server hands your browser a sealed (AES-256-GCM) token that contains your GitHub access token. The server keeps nothing: it decrypts the token on each request and forgets it. The token expires after 7 days, is never written to disk or logged, and is passed to the browser in the URL fragment so it never reaches a server log. Because it is stateless, a server restart does not log you out. Changing `SESSION_SECRET` invalidates every token.
 - **Browser storage.** The sealed token and your saved patterns are kept in your browser's `localStorage` / `sessionStorage`.
 - **Commit cap.** A single run is limited to 2,000 commits and one job per user at a time.
@@ -84,9 +84,11 @@ Please read this before connecting your account.
 
 You need Node.js 20+ and a GitHub OAuth app.
 
-### 1. Create a GitHub OAuth app
+### 1. Create a GitHub App (or an OAuth app)
 
-*GitHub → Settings → Developer settings → OAuth Apps → New OAuth App*
+Recommended: *GitHub → Settings → Developer settings → GitHub Apps → New GitHub App*. Give it **Repository permissions → Contents: Read and write**, set the callback URL below, set *Setup URL* to your frontend URL, and under *Optional features* opt out of *User-to-server token expiration*. Put the app's slug in `GITHUB_APP_SLUG` (step 2).
+
+Simpler but broader: *Developer settings → OAuth Apps → New OAuth App*, and leave `GITHUB_APP_SLUG` empty.
 
 | Field | Value |
 | --- | --- |
@@ -111,6 +113,7 @@ PORT=3000
 GITHUB_CLIENT_ID=your_client_id
 GITHUB_CLIENT_SECRET=your_client_secret
 GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
+GITHUB_APP_SLUG=your-github-app-slug   # leave empty for an OAuth app
 FRONTEND_URL=http://localhost:5173
 SESSION_SECRET=any_long_random_string
 ```

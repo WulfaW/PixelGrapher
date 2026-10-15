@@ -33,6 +33,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
   const [year, setYear] = useState(currentYear.toString());
   const [username, setUsername] = useState('');
   const [repos, setRepos] = useState<string[]>([]);
+  const [installUrl, setInstallUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [checkingRepo, setCheckingRepo] = useState(false);
@@ -154,6 +155,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
       if (response.ok) {
         const data = await response.json();
         setRepos(data.repos || []);
+        setInstallUrl(data.installUrl || null);
       } else {
         throw new Error('Failed to fetch repositories');
       }
@@ -381,6 +383,14 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
 
               <div className="space-y-2">
                 <Label htmlFor="repo">Select Repository</Label>
+                {installUrl && !loadingRepos && (
+                  <p className="text-xs text-muted-foreground">
+                    PixelGrapher can only write to the repositories you choose on GitHub.{' '}
+                    <a href={installUrl} className="underline underline-offset-2 hover:text-foreground">
+                      {repos.length === 0 ? 'Choose a repository' : 'Change repository access'}
+                    </a>
+                  </p>
+                )}
                 {loadingRepos ? (
                   <div className="space-y-2">
                     <Skeleton className="h-10 w-full" />
@@ -412,7 +422,7 @@ export default function GitHubPanel({ onConnect, onGenerate, onYearChange, grid 
                         />
                         <CommandList>
                           <CommandEmpty>
-                            {repos.length === 0 ? "Loading repositories..." : "No repository found."}
+                            No repository found.
                           </CommandEmpty>
                           <CommandGroup>
                             {repos
